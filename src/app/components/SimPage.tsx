@@ -1,3 +1,5 @@
+// ⬇️ ...imports and setup stay the same
+
 'use client';
 
 import { useState } from 'react';
@@ -29,6 +31,13 @@ export default function SimPage({ gameKey }: Props) {
   const [lost5050_4, setLost4] = useState(false);
   const [spentGBP, setSpent] = useState(0);
   const [currency, setCurrency] = useState('GBP');
+  const [designatedItem, setDesignatedItem] = useState<string | null>(null);
+  const [pathPoints, setPathPoints] = useState(0);
+
+  const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
+  const [selectedWeapons, setSelectedWeapons] = useState<string[]>([]);
+  const [charToAdd, setCharToAdd] = useState('');
+  const [weaponToAdd, setWeaponToAdd] = useState('');
 
   const rate = useExchangeRate(currency);
   const moneyDisp = (spentGBP * rate).toFixed(2);
@@ -41,6 +50,44 @@ export default function SimPage({ gameKey }: Props) {
     const slope = (maxRate - banner.rates['5-Star']) / (banner.pity['5-Star'] - start);
     return Math.min(banner.rates['5-Star'] + slope * (p - (start - 1)), maxRate);
   };
+
+  const getFeatured5Stars = () => {
+    return banner.type === 'chronicle'
+      ? [...selectedCharacters, ...selectedWeapons]
+      : banner.featured['5-Star'];
+  };
+
+    const handlePull = (rar: Rarity, pity: number, lost5050: boolean, localPath: number): [string, boolean, number] => {
+      const featured = getFeatured5Stars();
+      const fallback = banner.pool['5-Star'];
+      const bannerType = banner.type;
+
+      const isGuaranteed = designatedItem && (
+        (bannerType === 'chronicle' && localPath >= 1) ||
+        (bannerType === 'weapon' && localPath >= 2)
+      );
+
+      if (isGuaranteed) return [designatedItem!, false, 0];
+
+      if (bannerType === 'standard') {
+        return [rand(fallback), false, localPath];
+      }
+
+      const featHit = lost5050 || Math.random() < 0.5;
+      const pool = featHit && featured.length ? featured :
+                  fallback.length ? fallback : ['⚠️ Unknown 5★'];
+      const chosen = rand(pool);
+
+      let newPath = localPath;
+      if (designatedItem && chosen !== designatedItem && (bannerType === 'chronicle' || bannerType === 'weapon')) {
+        newPath += 1;
+      } else if (chosen === designatedItem) {
+        newPath = 0;
+      }
+
+      return [chosen, !featHit, newPath];
+    };
+
 
   const pullOnce = (): Pull => {
     const g5 = pity5 + 1 >= banner.pity['5-Star'];
@@ -55,16 +102,20 @@ export default function SimPage({ gameKey }: Props) {
     else rar = '3-Star';
 
     let pool: readonly string[];
+
     if (rar === '5-Star') {
-      const feat = banner.featured['5-Star'];
-      const featHit = lost5050_5 || Math.random() < 0.5;
-      pool = featHit && feat.length ? feat : banner.pool['5-Star'];
-      setLost5(!featHit); setPity5(0); setPity4(0);
+      const [chosen, lost, newPath] = handlePull(rar, pity5, lost5050_5, pathPoints);
+      setLost5(lost);
+      setPathPoints(newPath);
+      pool = [chosen];
+      setPity5(0); setPity4(0);
     } else if (rar === '4-Star') {
       const feat = banner.featured['4-Star'];
-      const featHit = lost5050_4 || Math.random() < 0.5;
-      pool = featHit && feat.length ? feat : banner.pool['4-Star'];
-      setLost4(!featHit); setPity5(pity5 + 1); setPity4(0);
+      const featHit = banner.type === 'standard' ? false : (lost5050_4 || Math.random() < 0.5);
+      const poolToUse = featHit && feat.length ? feat : banner.pool['4-Star'];
+      pool = poolToUse.length ? poolToUse : banner.pool['4-Star'];
+      if (banner.type !== 'standard') setLost4(!featHit);
+      setPity5(pity5 + 1); setPity4(0);
     } else {
       pool = banner.pool['3-Star'];
       setPity5(pity5 + 1); setPity4(pity4 + 1);
@@ -80,60 +131,73 @@ export default function SimPage({ gameKey }: Props) {
   };
 
   const tenPull = () => {
-  const pulls: Pull[] = [];
-  let localPity5 = pity5;
-  let localPity4 = pity4;
-  let localLost5050_5 = lost5050_5;
-  let localLost5050_4 = lost5050_4;
+    const pulls: Pull[] = [];
+    let localPity5 = pity5, localPity4 = pity4;
+    let localLost5050_5 = lost5050_5, localLost5050_4 = lost5050_4;
+    let localPath = pathPoints;
 
-  for (let i = 0; i < 10; i++) {
-    const g5 = localPity5 + 1 >= banner.pity['5-Star'];
-    const g4 = localPity4 + 1 >= banner.pity['4-Star'];
-    const r = Math.random();
-    let rar: Rarity;
+    for (let i = 0; i < 10; i++) {
+      const g5 = localPity5 + 1 >= banner.pity['5-Star'];
+      const g4 = localPity4 + 1 >= banner.pity['4-Star'];
+      const r = Math.random();
+      let rar: Rarity;
 
-    if (g5) rar = '5-Star';
-    else if (r < fiveRate(localPity5)) rar = '5-Star';
-    else if (g4) rar = '4-Star';
-    else if (r < fiveRate(localPity5) + banner.rates['4-Star']) rar = '4-Star';
-    else rar = '3-Star';
+      if (g5) rar = '5-Star';
+      else if (r < fiveRate(localPity5)) rar = '5-Star';
+      else if (g4) rar = '4-Star';
+      else if (r < fiveRate(localPity5) + banner.rates['4-Star']) rar = '4-Star';
+      else rar = '3-Star';
 
-    let pool: readonly string[];
-    if (rar === '5-Star') {
-      const feat = banner.featured['5-Star'];
-      const featHit = localLost5050_5 || Math.random() < 0.5;
-      pool = featHit && feat.length ? feat : banner.pool['5-Star'];
-      localLost5050_5 = !featHit;
-      localPity5 = 0;
-      localPity4 = 0;
-    } else if (rar === '4-Star') {
-      const feat = banner.featured['4-Star'];
-      const featHit = localLost5050_4 || Math.random() < 0.5;
-      pool = featHit && feat.length ? feat : banner.pool['4-Star'];
-      localLost5050_4 = !featHit;
-      localPity5 += 1;
-      localPity4 = 0;
-    } else {
-      pool = banner.pool['3-Star'];
-      localPity5 += 1;
-      localPity4 += 1;
+      let pool: readonly string[];
+
+      if (rar === '5-Star') {
+        const [chosen, lost, newPath] = handlePull(rar, localPity5, localLost5050_5, localPath);
+        localLost5050_5 = lost; localPath = newPath;
+        pool = [chosen]; localPity5 = 0; localPity4 = 0;
+      } else if (rar === '4-Star') {
+        const feat = banner.featured['4-Star'];
+        const featHit = banner.type === 'standard' ? false : (localLost5050_4 || Math.random() < 0.5);
+        const poolToUse = featHit && feat.length ? feat : banner.pool['4-Star'];
+        pool = poolToUse.length ? poolToUse : banner.pool['4-Star'];
+        if (banner.type !== 'standard') localLost5050_4 = !featHit;
+        localPity5 += 1; localPity4 = 0;
+      } else {
+        pool = banner.pool['3-Star'];
+        localPity5 += 1; localPity4 += 1;
+      }
+
+      pulls.push({ name: rand(pool), rarity: rar });
     }
 
-    pulls.push({ name: rand(pool), rarity: rar });
-  }
-
-  setHistory(h => [...pulls, ...h]);
-  setSpent(s => +(s + banner.costPerPullGBP * 10).toFixed(2));
-  setPity5(localPity5);
-  setPity4(localPity4);
-  setLost5(localLost5050_5);
-  setLost4(localLost5050_4);
-};
+    setHistory(h => [...pulls, ...h]);
+    setSpent(s => +(s + banner.costPerPullGBP * 10).toFixed(2));
+    setPity5(localPity5); setPity4(localPity4);
+    setLost5(localLost5050_5); setLost4(localLost5050_4);
+    setPathPoints(localPath);
+  };
 
   const changeBanner = (bk: keyof typeof game.banners) => {
     setSelectedBanner(bk);
     setHistory([]); setPity5(0); setPity4(0);
-    setLost5(false); setLost4(false); setSpent(0);
+    setLost5(false); setLost4(false);
+    setSpent(0); setDesignatedItem(null); setPathPoints(0);
+    setSelectedCharacters([]); setSelectedWeapons([]);
+  };
+
+  const allCharacters = banner.pool['5-Star']?.characters ?? [];
+  const allWeapons = banner.pool['5-Star']?.weapons ?? [];
+
+  const handleAdd = (item: string, type: 'char' | 'weapon') => {
+    if (type === 'char' && !selectedCharacters.includes(item) && selectedCharacters.length < 7)
+      setSelectedCharacters([...selectedCharacters, item]);
+    else if (type === 'weapon' && !selectedWeapons.includes(item) && selectedWeapons.length < 7)
+      setSelectedWeapons([...selectedWeapons, item]);
+  };
+
+  const handleRemove = (item: string, type: 'char' | 'weapon') => {
+    if (type === 'char') setSelectedCharacters(selectedCharacters.filter(c => c !== item));
+    else setSelectedWeapons(selectedWeapons.filter(w => w !== item));
+    if (designatedItem === item) setDesignatedItem(null);
   };
 
   return (
@@ -151,6 +215,60 @@ export default function SimPage({ gameKey }: Props) {
           <option key={c} value={c}>{currencySymbols[c]} {c}</option>
         ))}
       </select>
+
+      {(banner.type === 'chronicle' || banner.type === 'weapon') && (
+        <div className="mb-4 w-full max-w-md">
+          {banner.type === 'chronicle' && (
+            <>
+              <div className="flex mb-2">
+                <select value={charToAdd} onChange={e => setCharToAdd(e.target.value)} className="flex-1 border rounded p-2 mr-2">
+                  <option value="">Select Character</option>
+                  {allCharacters.filter((c: string) => !selectedCharacters.includes(c)).map((char: string) => (
+                    <option key={char} value={char}>{char}</option>
+                  ))}
+                </select>
+                <button onClick={() => handleAdd(charToAdd, 'char')} disabled={!charToAdd} className="bg-green-600 text-white px-3 rounded">Add</button>
+              </div>
+              <div className="mb-3 text-sm">
+                {selectedCharacters.map((char) => (
+                  <div key={char} className="flex justify-between border p-1 rounded mb-1 bg-white">
+                    {char} <button onClick={() => handleRemove(char, 'char')} className="text-red-500">×</button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex mb-2">
+                <select value={weaponToAdd} onChange={e => setWeaponToAdd(e.target.value)} className="flex-1 border rounded p-2 mr-2">
+                  <option value="">Select Weapon</option>
+                  {allWeapons.filter((w: string) => !selectedWeapons.includes(w)).map((weap: string) => (
+                    <option key={weap} value={weap}>{weap}</option>
+                  ))}
+                </select>
+                <button onClick={() => handleAdd(weaponToAdd, 'weapon')} disabled={!weaponToAdd} className="bg-green-600 text-white px-3 rounded">Add</button>
+              </div>
+              <div className="mb-3 text-sm">
+                {selectedWeapons.map((weap) => (
+                  <div key={weap} className="flex justify-between border p-1 rounded mb-1 bg-white">
+                    {weap} <button onClick={() => handleRemove(weap, 'weapon')} className="text-red-500">×</button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <label className="block mb-1">Designated 5★ Item:</label>
+          <select className="w-full border p-2 rounded" value={designatedItem || ''} onChange={e => setDesignatedItem(e.target.value)}>
+            <option value="">None</option>
+            {(banner.type === 'chronicle'
+              ? [...selectedCharacters, ...selectedWeapons]
+              : banner.featured['5-Star']
+            ).map((item: string) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
+          <p className="text-sm mt-1 text-gray-600">Path Points: {pathPoints}</p>
+        </div>
+      )}
 
       <div className="flex gap-4 mb-5">
         <button onClick={onePull} className="px-5 py-2 bg-purple-600 text-white rounded">One Pull</button>
