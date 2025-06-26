@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { gachaRates, GameKey } from '@/lib/gachaData';
 import { useExchangeRate } from '@/lib/useExchangeRate';
+import StatsDashboard from './StatsDashboard';
 
 type Rarity = '5-Star' | '4-Star' | '3-Star';
 interface Pull { name: string; rarity: Rarity }
@@ -38,6 +39,13 @@ export default function SimPage({ gameKey }: Props) {
   const [selectedWeapons, setSelectedWeapons] = useState<string[]>([]);
   const [charToAdd, setCharToAdd] = useState('');
   const [weaponToAdd, setWeaponToAdd] = useState('');
+
+  const fiveStarHistory = history.filter(p => p.rarity === '5-Star');
+  const totalPulls = history.length;
+  const totalFiveStars = fiveStarHistory.length;
+  const avgPullsPerFive = totalFiveStars ? (totalPulls / totalFiveStars).toFixed(1) : '-';
+  const lastFiveStarIndex = history.findIndex(p => p.rarity === '5-Star');
+  const lastFiveStarAt = lastFiveStarIndex !== -1 ? lastFiveStarIndex + 1 : '-';
 
   const rate = useExchangeRate(currency);
   const moneyDisp = (spentGBP * rate).toFixed(2);
@@ -277,6 +285,52 @@ export default function SimPage({ gameKey }: Props) {
 
       <p className="mb-2">Money spent: <strong>{symbol}{moneyDisp}</strong></p>
       <p className="mb-4">Pity 5★ {pity5}/{banner.pity['5-Star']} &nbsp;|&nbsp; Pity 4★ {pity4}/{banner.pity['4-Star']}</p>
+
+            <div className="flex gap-4 mb-3">
+        <button onClick={() => {
+          setHistory([]); setPity5(0); setPity4(0);
+          setLost5(false); setLost4(false);
+          setSpent(0); setPathPoints(0);
+        }} className="px-4 py-1 bg-red-600 text-white rounded">Clear Session</button>
+
+        <button
+          onClick={() => {
+            const data = {
+              pulls: history,
+              currency,
+              spent: `${symbol}${moneyDisp}`,
+              totalPulls,
+              totalFiveStars,
+              avgPullsPerFive,
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gacha_session.json';
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+          className="px-4 py-1 bg-blue-600 text-white rounded"
+        >
+          Export Session
+        </button>
+      </div>
+
+            <div className="mb-4 text-sm bg-white p-4 rounded shadow w-full max-w-md">
+        <p>Total Pulls: <strong>{totalPulls}</strong></p>
+        <p>Total 5★ Pulled: <strong>{totalFiveStars}</strong></p>
+        <p>Average Pulls per 5★: <strong>{avgPullsPerFive}</strong></p>
+        <p>Last 5★ was <strong>{lastFiveStarAt}</strong> pulls ago</p>
+
+        {spentGBP >= 100 && (
+          <p className="mt-2 text-red-600 font-bold">
+            ⚠️ You've simulated spending over £100!
+          </p>
+        )}
+      </div>
+
+      <StatsDashboard history={history} banner={banner} gameKey={gameKey} />
 
       <div className="w-full max-w-md">
         <h2 className="text-lg font-semibold mb-2">Pull History</h2>
