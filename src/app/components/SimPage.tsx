@@ -1,0 +1,363 @@
+'use client';
+
+import { useState } from 'react';
+import { gachaRates, GameKey } from '@/lib/gachaData';
+import { useExchangeRate } from '@/lib/useExchangeRate';
+
+import GlossaryModal from './GlossaryModal';
+import StatsDashboard from './StatsDashboard';
+import SummaryBox from './SummaryBox';
+import GameSelector from './GameSelector';
+
+import HeaderSection from './HeaderSection';
+import BannerCurrencySelect from './BannerCurrencySelect';
+import CustomizeFeaturedItems from './CustomizeFeaturedItems';
+import PullButtons from './PullButtons';
+import SessionOverview from './SessionOverview';
+import PullHistory from './PullHistory';
+
+type Rarity = '5-Star' | '4-Star' | '3-Star';
+interface Pull { name: string; rarity: Rarity }
+
+const currencySymbols: Record<string, string> = {
+  GBP: '£', USD: '$', EUR: '€', JPY: '¥', NGN: '₦', AUD: 'A$', CAD: 'C$', INR: '₹',
+};
+const supportedCurrencies = Object.keys(currencySymbols);
+
+interface Props {
+  gameKey: GameKey;
+}
+
+export default function SimPage({ gameKey }: Props) {
+  const game = gachaRates[gameKey] as { name: string; banners: Record<string, any> };
+  const bannerKeys = Object.keys(game.banners) as (keyof typeof game.banners)[];
+  const [selectedBanner, setSelectedBanner] = useState<keyof typeof game.banners>(bannerKeys[0]);
+  const banner = game.banners[selectedBanner];
+
+  const [history, setHistory] = useState<Pull[]>([]);
+  const [pity5, setPity5] = useState(0);
+  const [pity4, setPity4] = useState(0);
+  const [lost5050_5, setLost5] = useState(false);
+  const [lost5050_4, setLost4] = useState(false);
+  const [spentGBP, setSpent] = useState(0);
+  const [currency, setCurrency] = useState('GBP');
+  const [designatedItem, setDesignatedItem] = useState<string | null>(null);
+  const [pathPoints, setPathPoints] = useState(0);
+  const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
+  const [selectedWeapons, setSelectedWeapons] = useState<string[]>([]);
+  const [charToAdd, setCharToAdd] = useState('');
+  const [weaponToAdd, setWeaponToAdd] = useState('');
+
+  const fiveStarHistory = history.filter(p => p.rarity === '5-Star');
+  const totalPulls = history.length;
+  const totalFiveStars = fiveStarHistory.length;
+  const avgPullsPerFive = totalFiveStars ? (totalPulls / totalFiveStars).toFixed(1) : '-';
+  const lastFiveStarIndex = history.findIndex(p => p.rarity === '5-Star');
+  const lastFiveStarAt = lastFiveStarIndex !== -1 ? lastFiveStarIndex + 1 : '-';
+
+  const rate = useExchangeRate(currency);
+  const moneyDisp = (spentGBP * rate).toFixed(2);
+  const symbol = currencySymbols[currency] || '£';
+
+  const baseFiveRate = banner.rates['5-Star'];
+  const expectedFiveStars = +(totalPulls * baseFiveRate).toFixed(2);
+  const luckDelta = totalFiveStars - expectedFiveStars;
+  let luckMessage = '';
+  if (luckDelta > 0.5) luckMessage = '🎉 You’re luckier than expected!';
+  else if (luckDelta < -0.5) luckMessage = '💔 You’re pulling below average luck.';
+  else luckMessage = '📊 You’re right around statistical expectation.';
+
+  const rand = (a: readonly string[]) => a[Math.floor(Math.random() * a.length)];
+  const fiveRate = (p: number) => {
+    const { enabled, start, maxRate } = banner.softPity;
+    if (!enabled || p < start) return banner.rates['5-Star'];
+    const slope = (maxRate - banner.rates['5-Star']) / (banner.pity['5-Star'] - start);
+    return Math.min(banner.rates['5-Star'] + slope * (p - (start - 1)), maxRate);
+  };
+
+  const getFeatured5Stars = () => {
+    return banner.type === 'chronicle'
+      ? [...selectedCharacters, ...selectedWeapons]
+      : banner.featured['5-Star'];
+  };
+
+  const handlePull = (
+  rar: Rarity,
+  pity: number,
+  lost5050: boolean,
+  localPath: number
+): [string, boolean, number] => {
+  const featured = getFeatured5Stars();
+  const fallback = banner.pool['5-Star'];
+  const bannerType = banner.type;
+
+  // Handle designated guarantee path (Chronicle: 1, Weapon: 2)
+  const isGuaranteed = designatedItem && (
+    (bannerType === 'chronicle' && localPath >= 1) ||
+    (bannerType === 'weapon' && localPath >= 2)
+  );
+  if (isGuaranteed) return [designatedItem!, false, 0];
+
+  let pool: readonly string[];
+  const featHit = lost5050 || Math.random() < 0.5;
+
+  // Apply fallback logic if featured is empty
+  if (bannerType === 'chronicle') {
+    pool = featured.length ? featured : fallback;
+  } else {
+    pool = featHit && featured.length ? featured : fallback;
+  }
+
+  const chosen = rand(pool);
+
+  let newPath = localPath;
+  if (designatedItem && chosen !== designatedItem && (bannerType === 'chronicle' || bannerType === 'weapon')) {
+    newPath += 1;
+  } else if (chosen === designatedItem) {
+    newPath = 0;
+  }
+
+  return [chosen, !featHit, newPath];
+};
+
+  const pullOnce = (): Pull => {
+  const g5 = pity5 + 1 >= banner.pity['5-Star'];
+  const g4 = pity4 + 1 >= banner.pity['4-Star'];
+  const r = Math.random();
+  let rar: Rarity;
+
+  if (g5) rar = '5-Star';
+  else if (r < fiveRate(pity5)) rar = '5-Star';
+  else if (g4) rar = '4-Star';
+  else if (r < fiveRate(pity5) + banner.rates['4-Star']) rar = '4-Star';
+  else rar = '3-Star';
+
+  let chosen = '';
+  if (rar === '5-Star') {
+    const [result, lost, newPath] = handlePull(rar, pity5, lost5050_5, pathPoints);
+    chosen = result;
+    setLost5(lost);
+    setPathPoints(newPath);
+    setPity5(0);
+    setPity4(0);
+  } else if (rar === '4-Star') {
+    const feat = banner.featured['4-Star'];
+    const featHit = banner.type === 'standard' ? false : (lost5050_4 || Math.random() < 0.5);
+    const poolToUse = featHit && feat.length ? feat : banner.pool['4-Star'];
+    chosen = rand(poolToUse);
+    if (banner.type !== 'standard') setLost4(!featHit);
+    setPity5(pity5 + 1);
+    setPity4(0);
+  } else {
+    chosen = rand(banner.pool['3-Star']);
+    setPity5(pity5 + 1);
+    setPity4(pity4 + 1);
+  }
+
+  return { name: chosen, rarity: rar };
+};
+
+  const onePull = () => {
+    const p = pullOnce();
+    setHistory(h => [p, ...h]);
+    setSpent(s => +(s + banner.costPerPullGBP).toFixed(2));
+  };
+
+  const tenPull = () => {
+  const pulls: Pull[] = [];
+  let localPity5 = pity5, localPity4 = pity4;
+  let localLost5050_5 = lost5050_5, localLost5050_4 = lost5050_4;
+  let localPath = pathPoints;
+
+  for (let i = 0; i < 10; i++) {
+    const g5 = localPity5 + 1 >= banner.pity['5-Star'];
+    const g4 = localPity4 + 1 >= banner.pity['4-Star'];
+    const r = Math.random();
+    let rar: Rarity;
+
+    if (g5) rar = '5-Star';
+    else if (r < fiveRate(localPity5)) rar = '5-Star';
+    else if (g4) rar = '4-Star';
+    else if (r < fiveRate(localPity5) + banner.rates['4-Star']) rar = '4-Star';
+    else rar = '3-Star';
+
+    if (rar === '5-Star') {
+      const [chosen, lost, newPath] = handlePull(rar, localPity5, localLost5050_5, localPath);
+      localLost5050_5 = lost;
+      localPath = newPath;
+      localPity5 = 0;
+      localPity4 = 0;
+      pulls.push({ name: chosen, rarity: rar });
+      continue;
+    }
+
+    let pool: readonly string[];
+
+    if (rar === '4-Star') {
+      const feat = banner.featured['4-Star'];
+      const featHit = banner.type === 'standard' ? false : (localLost5050_4 || Math.random() < 0.5);
+      pool = featHit && feat.length ? feat : banner.pool['4-Star'];
+      if (banner.type !== 'standard') localLost5050_4 = !featHit;
+      localPity5 += 1;
+      localPity4 = 0;
+    } else {
+      pool = banner.pool['3-Star'];
+      localPity5 += 1;
+      localPity4 += 1;
+    }
+
+    pulls.push({ name: rand(pool), rarity: rar });
+  }
+
+  setHistory(h => [...pulls, ...h]);
+  setSpent(s => +(s + banner.costPerPullGBP * 10).toFixed(2));
+  setPity5(localPity5);
+  setPity4(localPity4);
+  setLost5(localLost5050_5);
+  setLost4(localLost5050_4);
+  setPathPoints(localPath);
+};
+
+
+  const changeBanner = (bk: keyof typeof game.banners) => {
+    setSelectedBanner(bk);
+    setHistory([]); setPity5(0); setPity4(0);
+    setLost5(false); setLost4(false);
+    setSpent(0); setDesignatedItem(null); setPathPoints(0);
+    setSelectedCharacters([]); setSelectedWeapons([]);
+  };
+
+  const handleExport = () => {
+    const data = {
+      pulls: history,
+      currency,
+      spent: `${symbol}${moneyDisp}`,
+      totalPulls,
+      totalFiveStars,
+      avgPullsPerFive,
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gacha_session.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+ const allCharacters =
+  banner.type === 'chronicle' ? banner.pool['5-Star-Meta'].characters : [];
+
+const allWeapons =
+  banner.type === 'chronicle' ? banner.pool['5-Star-Meta'].weapons : [];
+
+
+
+  const handleAdd = (item: string, type: 'char' | 'weapon') => {
+  if (type === 'char' && !selectedCharacters.includes(item) && selectedCharacters.length < 7) {
+    setSelectedCharacters([...selectedCharacters, item]);
+  } else if (type === 'weapon' && !selectedWeapons.includes(item) && selectedWeapons.length < 7) {
+    setSelectedWeapons([...selectedWeapons, item]);
+  }
+};
+
+const handleRemove = (item: string, type: 'char' | 'weapon') => {
+  if (type === 'char') {
+    setSelectedCharacters(selectedCharacters.filter(c => c !== item));
+  } else {
+    setSelectedWeapons(selectedWeapons.filter(w => w !== item));
+  }
+  if (designatedItem === item) {
+    setDesignatedItem(null);
+  }
+};
+
+
+  return (
+    <main className="min-h-screen bg-gray-100 text-black py-8 px-4">
+      <div className="max-w-screen-xl mx-auto mb-8">
+        <GameSelector />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] gap-6 max-w-screen-xl mx-auto">
+        <aside className="space-y-5">
+          <div className="bg-white rounded-2xl shadow-md p-5 border border-gray-200">
+            <StatsDashboard history={history} banner={banner} gameKey={gameKey} />
+          </div>
+        </aside>
+
+        <section className="space-y-5">
+          <HeaderSection
+            gameName={game.name}
+            bannerName={banner.name}
+            bannerType={banner.type}
+            rates={banner.rates}
+            pity={banner.pity}
+            softPity={banner.softPity}
+          />
+
+          <BannerCurrencySelect
+            selectedBanner={selectedBanner}
+            currency={currency}
+            bannerKeys={bannerKeys}
+            supportedCurrencies={supportedCurrencies}
+            currencySymbols={currencySymbols}
+            gameBanners={game.banners}
+            onChangeBanner={changeBanner}
+            onChangeCurrency={setCurrency}
+          />
+
+          {(banner.type === 'chronicle' || banner.type === 'weapon') && (
+            <CustomizeFeaturedItems
+              bannerType={banner.type}
+              selectedCharacters={selectedCharacters}
+              selectedWeapons={selectedWeapons}
+              allCharacters={allCharacters}
+              allWeapons={allWeapons}
+              designatedItem={designatedItem}
+              pathPoints={pathPoints}
+              charToAdd={charToAdd}
+              weaponToAdd={weaponToAdd}
+              setCharToAdd={setCharToAdd}
+              setWeaponToAdd={setWeaponToAdd}
+              handleAdd={handleAdd}
+              handleRemove={handleRemove}
+              handleDesignatedSelect={setDesignatedItem}
+              featured5Stars={getFeatured5Stars()}
+            />
+          )}
+
+          <PullButtons onOnePull={onePull} onTenPull={tenPull} />
+
+          <SessionOverview
+            moneyDisp={moneyDisp}
+            symbol={symbol}
+            pity5={pity5}
+            pity4={pity4}
+            pityMax5={banner.pity['5-Star']}
+            pityMax4={banner.pity['4-Star']}
+            onClear={() => {
+              setHistory([]); setPity5(0); setPity4(0);
+              setLost5(false); setLost4(false); setSpent(0);
+              setPathPoints(0);
+            }}
+            onExport={handleExport}
+          />
+
+          <SummaryBox
+            totalPulls={totalPulls}
+            totalFiveStars={totalFiveStars}
+            avgPullsPerFive={avgPullsPerFive}
+            lastFiveStarAt={lastFiveStarAt}
+            expectedFiveStars={expectedFiveStars}
+            luckMessage={luckMessage}
+            currency={currency}
+            moneyDisp={moneyDisp}
+          />
+
+          <PullHistory history={history} />
+        </section>
+      </div>
+    </main>
+  );
+}
