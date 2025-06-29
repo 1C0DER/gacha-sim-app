@@ -51,31 +51,31 @@ export default function SimPage({ gameKey }: Props) {
   const moneyDisp = (spentGBP * rate).toFixed(2);
   const symbol = currencySymbols[currency] || '£';
   const baseFiveRate = banner.rates['5-Star'];
-const expectedFiveStars = +(totalPulls * baseFiveRate).toFixed(2);
-const luckDelta = totalFiveStars - expectedFiveStars;
+  const expectedFiveStars = +(totalPulls * baseFiveRate).toFixed(2);
+  const luckDelta = totalFiveStars - expectedFiveStars;
 
-let luckMessage = '';
-if (luckDelta > 0.5) {
-  luckMessage = '🎉 You’re luckier than expected!';
-} else if (luckDelta < -0.5) {
-  luckMessage = '💔 You’re pulling below average luck.';
-} else {
-  luckMessage = '📊 You’re right around statistical expectation.';
-}
+    let luckMessage = '';
+    if (luckDelta > 0.5) {
+      luckMessage = '🎉 You’re luckier than expected!';
+    } else if (luckDelta < -0.5) {
+      luckMessage = '💔 You’re pulling below average luck.';
+    } else {
+      luckMessage = '📊 You’re right around statistical expectation.';
+    }
 
-  const rand = (a: readonly string[]) => a[Math.floor(Math.random() * a.length)];
-  const fiveRate = (p: number) => {
-    const { enabled, start, maxRate } = banner.softPity;
-    if (!enabled || p < start) return banner.rates['5-Star'];
-    const slope = (maxRate - banner.rates['5-Star']) / (banner.pity['5-Star'] - start);
-    return Math.min(banner.rates['5-Star'] + slope * (p - (start - 1)), maxRate);
-  };
+    const rand = (a: readonly string[]) => a[Math.floor(Math.random() * a.length)];
+    const fiveRate = (p: number) => {
+      const { enabled, start, maxRate } = banner.softPity;
+      if (!enabled || p < start) return banner.rates['5-Star'];
+      const slope = (maxRate - banner.rates['5-Star']) / (banner.pity['5-Star'] - start);
+      return Math.min(banner.rates['5-Star'] + slope * (p - (start - 1)), maxRate);
+    };
 
-  const getFeatured5Stars = () => {
-    return banner.type === 'chronicle'
-      ? [...selectedCharacters, ...selectedWeapons]
-      : banner.featured['5-Star'];
-  };
+    const getFeatured5Stars = () => {
+      return banner.type === 'chronicle'
+        ? [...selectedCharacters, ...selectedWeapons]
+        : banner.featured['5-Star'];
+    };
 
     const handlePull = (rar: Rarity, pity: number, lost5050: boolean, localPath: number): [string, boolean, number] => {
       const featured = getFeatured5Stars();
@@ -104,7 +104,6 @@ if (luckDelta > 0.5) {
       } else if (chosen === designatedItem) {
         newPath = 0;
       }
-
       return [chosen, !featHit, newPath];
     };
 
@@ -140,7 +139,6 @@ if (luckDelta > 0.5) {
       pool = banner.pool['3-Star'];
       setPity5(pity5 + 1); setPity4(pity4 + 1);
     }
-
     return { name: rand(pool), rarity: rar };
   };
 
@@ -185,7 +183,6 @@ if (luckDelta > 0.5) {
         pool = banner.pool['3-Star'];
         localPity5 += 1; localPity4 += 1;
       }
-
       pulls.push({ name: rand(pool), rarity: rar });
     }
 
@@ -223,19 +220,17 @@ if (luckDelta > 0.5) {
   return (
     <main className="min-h-screen flex flex-col items-center p-4 bg-gray-100">
       <div className="flex items-center justify-between w-full max-w-md mb-4">
-  <h1 className="text-2xl font-bold">{game.name} — {banner.name}</h1>
-  <div className="flex items-center">
-    <InfoModal
-      bannerType={banner.type}
-      rates={banner.rates}
-      pity={banner.pity}
-      softPity={banner.softPity}
-    />
-    <GlossaryModal />
-  </div>
-</div>
-
-
+        <h1 className="text-2xl font-bold">{game.name} — {banner.name}</h1>
+        <div className="flex items-center">
+          <InfoModal
+            bannerType={banner.type}
+            rates={banner.rates}
+            pity={banner.pity}
+            softPity={banner.softPity}
+          />
+          <GlossaryModal />
+        </div>
+      </div>
 
       <select value={selectedBanner} onChange={e => changeBanner(e.target.value as keyof typeof game.banners)} className="p-2 border rounded mb-3">
         {bannerKeys.map(k => (
@@ -348,17 +343,16 @@ if (luckDelta > 0.5) {
         <p>Average Pulls per 5★: <strong>{avgPullsPerFive}</strong></p>
         <p>Last 5★ was <strong>{lastFiveStarAt}</strong> pulls ago</p>
           <hr className="my-3" />
-  <p>Statistically Expected 5★s: <strong>{expectedFiveStars}</strong></p>
-  <p>{luckMessage}</p>
+        <p>Statistically Expected 5★s: <strong>{expectedFiveStars}</strong></p>
+        <p>{luckMessage}</p>
 
         {spentGBP >= 200 ? (
-  <p className="mt-2 text-red-700 font-bold">🚨 You've spent over £200 — that’s console money!</p>
-) : spentGBP >= 100 ? (
-  <p className="mt-2 text-red-600 font-bold">⚠️ You’ve simulated spending over £100.</p>
-) : spentGBP >= 50 ? (
-  <p className="mt-2 text-yellow-600 font-semibold">⚠️ You’ve spent over £50 — that’s a full-priced game.</p>
-) : null}
-
+        <p className="mt-2 text-red-700 font-bold">🚨 You've spent over £200 — that’s console money!</p>
+      ) : spentGBP >= 100 ? (
+        <p className="mt-2 text-red-600 font-bold">⚠️ You’ve simulated spending over £100.</p>
+      ) : spentGBP >= 50 ? (
+        <p className="mt-2 text-yellow-600 font-semibold">⚠️ You’ve spent over £50 — that’s a full-priced game.</p>
+      ) : null}
       </div>
 
       <StatsDashboard history={history} banner={banner} gameKey={gameKey} />

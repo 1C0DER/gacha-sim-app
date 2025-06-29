@@ -1,7 +1,5 @@
-// lib/useExchangeRate.ts
 import { useState, useEffect } from 'react';
 
-// Sample fallback rates (1 GBP = X)
 const fallbackRates: Record<string, number> = {
   GBP: 1,
   USD: 1.26,

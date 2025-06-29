@@ -9,7 +9,6 @@ export default function GamePage() {
   const router = useRouter();
   const params = useParams();
   const gameParam = (params?.game as string)?.toLowerCase();
-
   const validKey = (Object.keys(gachaRates) as GameKey[]).find(
     (key) => key.toLowerCase() === gameParam
   );
@@ -19,8 +18,6 @@ export default function GamePage() {
       router.replace('/'); 
     }
   }, [validKey, router]);
-
   if (!validKey) return null;
-
   return <SimPage gameKey={validKey} />;
 }

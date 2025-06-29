@@ -1,10 +1,7 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import {
-  Chart as ChartJS, ArcElement, Tooltip, Legend,
-  BarElement, CategoryScale, LinearScale, PointElement, LineElement, Filler
-} from 'chart.js';
+import {Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement, Filler} from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import type { Chart as ChartInstance } from 'chart.js';
 import { GameKey } from '@/lib/gachaData';
@@ -68,7 +65,6 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
   };
 
   const pullsFiltered = useMemo(() => history.filter(p => p.rarity !== '3-Star'), [history]);
-
   const rarityCount = pullsFiltered.reduce((acc, p) => {
     acc[p.rarity] = (acc[p.rarity] || 0) + 1;
     return acc;
