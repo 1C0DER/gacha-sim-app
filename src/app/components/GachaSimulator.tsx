@@ -7,6 +7,7 @@ import GlossaryModal from './GlossaryModal';
 import StatsDashboard from './StatsDashboard';
 import InfoModal from './InfoModal';
 import SummaryBox from './SummaryBox';
+import GameSelector from './GameSelector';
 
 type Rarity = '5-Star' | '4-Star' | '3-Star';
 interface Pull { name: string; rarity: Rarity }
@@ -213,61 +214,54 @@ export default function SimPage({ gameKey }: Props) {
     if (designatedItem === item) setDesignatedItem(null);
   };
 
-  return (
-  <main className="relative min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] text-black overflow-hidden">
-    {/* Background swirl / particles */}
-    <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-black opacity-20 rounded-full filter blur-3xl animate-pulse z-0" />
-    <div className="absolute bottom-[-200px] right-[-200px] w-[500px] h-[500px] bg-emerald-400 opacity-20 rounded-full filter blur-2xl animate-pulse z-0" />
+return (
+  <main className="min-h-screen bg-gray-100 text-black py-8 px-4">
+    <div className="max-w-screen-xl mx-auto mb-8">
+      <GameSelector />
+    </div>
 
-    {/* Grid layout */}
-    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] gap-6 px-4 py-8 lg:px-12 xl:px-20">
-      
-      {/* Left Panel: Stats Dashboard */}
-      <aside className="space-y-6">
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] gap-6 max-w-screen-xl mx-auto">
+      {/* Stats Dashboard */}
+      <aside className="space-y-5">
+        <div className="bg-white rounded-2xl shadow-md p-5 border border-gray-200">
           <StatsDashboard history={history} banner={banner} gameKey={gameKey} />
         </div>
       </aside>
 
-      {/* Right Panel: Main Controls */}
-      <section className="space-y-6">
+      {/* Main Controls */}
+      <section className="space-y-5">
         {/* Header */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md text-center p-6">
-          <h1 className="text-3xl font-bold mb-2 text-black tracking-wide">{game.name} — {banner.name}</h1>
-          <div className="flex justify-center gap-4 mt-2">
-            <InfoModal
-              bannerType={banner.type}
-              rates={banner.rates}
-              pity={banner.pity}
-              softPity={banner.softPity}
-            />
+        <div className="bg-white rounded-2xl shadow-md text-center p-5 border border-gray-200">
+          <h1 className="text-3xl font-bold mb-2 text-gray-800">{game.name} — {banner.name}</h1>
+          <div className="flex justify-center gap-3 mt-2">
+            <InfoModal bannerType={banner.type} rates={banner.rates} pity={banner.pity} softPity={banner.softPity} />
             <GlossaryModal />
           </div>
         </div>
 
         {/* Dropdowns */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md grid sm:grid-cols-2 gap-4 p-6">
+        <div className="bg-white rounded-2xl shadow-md grid sm:grid-cols-2 gap-3 p-5 border border-gray-200">
           <div>
-            <label className="block text-sm font-medium mb-1 text-black">Banner</label>
+            <label className="block text-sm font-medium mb-1">Banner</label>
             <select
               value={selectedBanner}
               onChange={e => changeBanner(e.target.value as keyof typeof game.banners)}
-              className="w-full p-2 rounded border border-gray-300 bg-white text-black"
+              className="w-full p-2 rounded border border-gray-300"
             >
-              {bannerKeys.map(k => (
+              {bannerKeys.map((k: keyof typeof game.banners) => (
                 <option key={k} value={k}>{game.banners[k].name}</option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-black">Currency</label>
+            <label className="block text-sm font-medium mb-1">Currency</label>
             <select
               value={currency}
               onChange={e => setCurrency(e.target.value)}
-              className="w-full p-2 rounded border border-gray-300 bg-white text-black"
+              className="w-full p-2 rounded border border-gray-300"
             >
-              {supportedCurrencies.map(c => (
+              {supportedCurrencies.map((c: string) => (
                 <option key={c} value={c}>{currencySymbols[c]} {c}</option>
               ))}
             </select>
@@ -276,53 +270,73 @@ export default function SimPage({ gameKey }: Props) {
 
         {/* Chronicle / Weapon Config */}
         {(banner.type === 'chronicle' || banner.type === 'weapon') && (
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-black">Customize Featured Items</h2>
+          <div className="bg-white rounded-2xl shadow-md p-5 space-y-4 border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-800">Customize Featured Items</h2>
 
             {banner.type === 'chronicle' && (
               <>
+                {/* Character Select */}
                 <div className="flex gap-2">
                   <select
                     value={charToAdd}
                     onChange={e => setCharToAdd(e.target.value)}
-                    className="flex-1 p-2 rounded border border-gray-300 bg-white text-black"
+                    className="flex-1 p-2 rounded border border-gray-300"
                   >
                     <option value="">Select Character</option>
-                    {allCharacters.filter((c: string) => !selectedCharacters.includes(c)).map((char: string) => (
-                      <option key={char} value={char}>{char}</option>
-                    ))}
+                    {allCharacters
+                      .filter((c: string) => !selectedCharacters.includes(c))
+                      .map((char: string) => (
+                        <option key={char} value={char}>{char}</option>
+                      ))}
                   </select>
-                  <button onClick={() => handleAdd(charToAdd, 'char')} disabled={!charToAdd} className="bg-emerald-500 hover:bg-emerald-600 text-black px-4 py-2 rounded transition">Add</button>
+                  <button
+                    onClick={() => handleAdd(charToAdd, 'char')}
+                    disabled={!charToAdd}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition"
+                  >
+                    Add
+                  </button>
                 </div>
 
+                {/* Selected Characters */}
                 <div className="space-y-1">
-                  {selectedCharacters.map((char) => (
-                    <div key={char} className="flex justify-between items-center bg-white bg-opacity-20 px-3 py-1 rounded">
+                  {selectedCharacters.map((char: string) => (
+                    <div key={char} className="flex justify-between items-center bg-gray-100 px-3 py-1 rounded">
                       <span>{char}</span>
-                      <button onClick={() => handleRemove(char, 'char')} className="text-red-400 font-bold">×</button>
+                      <button onClick={() => handleRemove(char, 'char')} className="text-red-600 font-bold">×</button>
                     </div>
                   ))}
                 </div>
 
+                {/* Weapon Select */}
                 <div className="flex gap-2 mt-4">
                   <select
                     value={weaponToAdd}
                     onChange={e => setWeaponToAdd(e.target.value)}
-                    className="flex-1 p-2 rounded border border-gray-300 bg-white text-black"
+                    className="flex-1 p-2 rounded border border-gray-300"
                   >
                     <option value="">Select Weapon</option>
-                    {allWeapons.filter((w: string) => !selectedWeapons.includes(w)).map((weap: string) => (
-                      <option key={weap} value={weap}>{weap}</option>
-                    ))}
+                    {allWeapons
+                      .filter((w: string) => !selectedWeapons.includes(w))
+                      .map((weap: string) => (
+                        <option key={weap} value={weap}>{weap}</option>
+                      ))}
                   </select>
-                  <button onClick={() => handleAdd(weaponToAdd, 'weapon')} disabled={!weaponToAdd} className="bg-emerald-500 hover:bg-emerald-600 text-black px-4 py-2 rounded transition">Add</button>
+                  <button
+                    onClick={() => handleAdd(weaponToAdd, 'weapon')}
+                    disabled={!weaponToAdd}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition"
+                  >
+                    Add
+                  </button>
                 </div>
 
+                {/* Selected Weapons */}
                 <div className="space-y-1">
-                  {selectedWeapons.map((weap) => (
-                    <div key={weap} className="flex justify-between items-center bg-white bg-opacity-20 px-3 py-1 rounded">
+                  {selectedWeapons.map((weap: string) => (
+                    <div key={weap} className="flex justify-between items-center bg-gray-100 px-3 py-1 rounded">
                       <span>{weap}</span>
-                      <button onClick={() => handleRemove(weap, 'weapon')} className="text-red-400 font-bold">×</button>
+                      <button onClick={() => handleRemove(weap, 'weapon')} className="text-red-600 font-bold">×</button>
                     </div>
                   ))}
                 </div>
@@ -331,9 +345,9 @@ export default function SimPage({ gameKey }: Props) {
 
             {/* Designated */}
             <div>
-              <label className="block text-sm font-semibold mb-1 text-black">Designated 5★ Item</label>
+              <label className="block text-sm font-semibold mb-1">Designated 5★ Item</label>
               <select
-                className="w-full p-2 rounded border border-gray-300 bg-white text-black"
+                className="w-full p-2 rounded border border-gray-300"
                 value={designatedItem || ''}
                 onChange={e => setDesignatedItem(e.target.value)}
               >
@@ -345,26 +359,32 @@ export default function SimPage({ gameKey }: Props) {
                   <option key={item} value={item}>{item}</option>
                 ))}
               </select>
-              <p className="text-sm text-black mt-1">Path Points: {pathPoints}</p>
+              <p className="text-sm text-gray-600 mt-1">Path Points: {pathPoints}</p>
             </div>
           </div>
         )}
 
-        <div className="flex justify-center gap-4">
-          <button onClick={onePull} className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">One Pull</button>
-          <button onClick={tenPull} className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-lg transition">Ten Pulls</button>
+        {/* Pull Buttons */}
+        <div className="flex justify-center gap-3">
+          <button onClick={onePull} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition">One Pull</button>
+          <button onClick={tenPull} className="px-5 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-md text-sm font-medium transition">Ten Pulls</button>
         </div>
 
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md text-sm p-6 space-y-2">
+        {/* Session Overview */}
+        <div className="bg-white rounded-2xl shadow-md p-5 text-sm space-y-2 border border-gray-200">
           <p>💸 <strong>{symbol}{moneyDisp}</strong> spent</p>
           <p>Pity: 5★ <strong>{pity5}/{banner.pity['5-Star']}</strong> | 4★ <strong>{pity4}/{banner.pity['4-Star']}</strong></p>
           <div className="flex gap-3 mt-3">
-            <button onClick={() => {
-              setHistory([]); setPity5(0); setPity4(0);
-              setLost5(false); setLost4(false);
-              setSpent(0); setPathPoints(0);
-            }} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">Clear Session</button>
-
+            <button
+              onClick={() => {
+                setHistory([]); setPity5(0); setPity4(0);
+                setLost5(false); setLost4(false);
+                setSpent(0); setPathPoints(0);
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+            >
+              Clear Session
+            </button>
             <button
               onClick={() => {
                 const data = {
@@ -390,28 +410,29 @@ export default function SimPage({ gameKey }: Props) {
           </div>
         </div>
 
-          <div className='mt-4'>
-                <SummaryBox
-          totalPulls={totalPulls}
-          totalFiveStars={totalFiveStars}
-          avgPullsPerFive={avgPullsPerFive}
-          lastFiveStarAt={lastFiveStarAt}
-          expectedFiveStars={expectedFiveStars}
-          luckMessage={luckMessage}
-          currency={currency}
-          moneyDisp={moneyDisp}
-        />
-      </div>
+        {/* Summary Stats */}
+        <div className="mt-4">
+          <SummaryBox
+            totalPulls={totalPulls}
+            totalFiveStars={totalFiveStars}
+            avgPullsPerFive={avgPullsPerFive}
+            lastFiveStarAt={lastFiveStarAt}
+            expectedFiveStars={expectedFiveStars}
+            luckMessage={luckMessage}
+            currency={currency}
+            moneyDisp={moneyDisp}
+          />
+        </div>
 
         {/* Pull History */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md p-6">
-          <h2 className="text-lg font-semibold text-black mb-2">Pull History</h2>
-          <ul className="max-h-[300px] overflow-y-auto space-y-1 text-sm text-black">
+        <div className="bg-white rounded-2xl shadow-md p-5 border border-gray-200">
+          <h2 className="text-lg font-semibold mb-2 text-gray-800">Pull History</h2>
+          <ul className="max-h-[300px] overflow-y-auto space-y-1 text-sm">
             {history.map((p, i) => (
-              <li key={i} className="border-b border-white/20 pb-1 last:border-0">
-                {p.rarity === '5-Star' && <span className="text-yellow-300 font-bold">⭐️⭐️⭐️⭐️⭐️ </span>}
-                {p.rarity === '4-Star' && <span className="text-purple-300 font-bold">⭐️⭐️⭐️⭐️ </span>}
-                {p.rarity === '3-Star' && <span className="text-gray-300">⭐️⭐️⭐️ </span>}
+              <li key={i} className="border-b border-gray-200 pb-1 last:border-0">
+                {p.rarity === '5-Star' && <span className="text-yellow-500 font-bold">⭐️⭐️⭐️⭐️⭐️ </span>}
+                {p.rarity === '4-Star' && <span className="text-purple-500 font-bold">⭐️⭐️⭐️⭐️ </span>}
+                {p.rarity === '3-Star' && <span className="text-gray-400">⭐️⭐️⭐️ </span>}
                 {p.name}
               </li>
             ))}
@@ -421,5 +442,4 @@ export default function SimPage({ gameKey }: Props) {
     </div>
   </main>
 );
-
 }
