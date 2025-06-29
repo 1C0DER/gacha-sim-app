@@ -1,11 +1,11 @@
-// ⬇️ ...imports and setup stay the same
-
 'use client';
 
 import { useState } from 'react';
 import { gachaRates, GameKey } from '@/lib/gachaData';
 import { useExchangeRate } from '@/lib/useExchangeRate';
+import GlossaryModal from './GlossaryModal';
 import StatsDashboard from './StatsDashboard';
+import InfoModal from './InfoModal';
 
 type Rarity = '5-Star' | '4-Star' | '3-Star';
 interface Pull { name: string; rarity: Rarity }
@@ -50,6 +50,18 @@ export default function SimPage({ gameKey }: Props) {
   const rate = useExchangeRate(currency);
   const moneyDisp = (spentGBP * rate).toFixed(2);
   const symbol = currencySymbols[currency] || '£';
+  const baseFiveRate = banner.rates['5-Star'];
+const expectedFiveStars = +(totalPulls * baseFiveRate).toFixed(2);
+const luckDelta = totalFiveStars - expectedFiveStars;
+
+let luckMessage = '';
+if (luckDelta > 0.5) {
+  luckMessage = '🎉 You’re luckier than expected!';
+} else if (luckDelta < -0.5) {
+  luckMessage = '💔 You’re pulling below average luck.';
+} else {
+  luckMessage = '📊 You’re right around statistical expectation.';
+}
 
   const rand = (a: readonly string[]) => a[Math.floor(Math.random() * a.length)];
   const fiveRate = (p: number) => {
@@ -210,7 +222,20 @@ export default function SimPage({ gameKey }: Props) {
 
   return (
     <main className="min-h-screen flex flex-col items-center p-4 bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">{game.name} — {banner.name}</h1>
+      <div className="flex items-center justify-between w-full max-w-md mb-4">
+  <h1 className="text-2xl font-bold">{game.name} — {banner.name}</h1>
+  <div className="flex items-center">
+    <InfoModal
+      bannerType={banner.type}
+      rates={banner.rates}
+      pity={banner.pity}
+      softPity={banner.softPity}
+    />
+    <GlossaryModal />
+  </div>
+</div>
+
+
 
       <select value={selectedBanner} onChange={e => changeBanner(e.target.value as keyof typeof game.banners)} className="p-2 border rounded mb-3">
         {bannerKeys.map(k => (
@@ -322,12 +347,18 @@ export default function SimPage({ gameKey }: Props) {
         <p>Total 5★ Pulled: <strong>{totalFiveStars}</strong></p>
         <p>Average Pulls per 5★: <strong>{avgPullsPerFive}</strong></p>
         <p>Last 5★ was <strong>{lastFiveStarAt}</strong> pulls ago</p>
+          <hr className="my-3" />
+  <p>Statistically Expected 5★s: <strong>{expectedFiveStars}</strong></p>
+  <p>{luckMessage}</p>
 
-        {spentGBP >= 100 && (
-          <p className="mt-2 text-red-600 font-bold">
-            ⚠️ You've simulated spending over £100!
-          </p>
-        )}
+        {spentGBP >= 200 ? (
+  <p className="mt-2 text-red-700 font-bold">🚨 You've spent over £200 — that’s console money!</p>
+) : spentGBP >= 100 ? (
+  <p className="mt-2 text-red-600 font-bold">⚠️ You’ve simulated spending over £100.</p>
+) : spentGBP >= 50 ? (
+  <p className="mt-2 text-yellow-600 font-semibold">⚠️ You’ve spent over £50 — that’s a full-priced game.</p>
+) : null}
+
       </div>
 
       <StatsDashboard history={history} banner={banner} gameKey={gameKey} />
