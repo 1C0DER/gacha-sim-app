@@ -74,12 +74,6 @@ export default function GlossaryModal() {
                 </li>
               ))}
             </ul>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="mt-4 px-4 py-1 bg-blue-500 text-white rounded"
-            >
-              Close
-            </button>
           </Dialog.Panel>
         </div>
       </Dialog>
