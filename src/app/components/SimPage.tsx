@@ -6,6 +6,7 @@ import { useExchangeRate } from '@/lib/useExchangeRate';
 import GlossaryModal from './GlossaryModal';
 import StatsDashboard from './StatsDashboard';
 import InfoModal from './InfoModal';
+import SummaryBox from './SummaryBox';
 
 type Rarity = '5-Star' | '4-Star' | '3-Star';
 interface Pull { name: string; rarity: Rarity }
@@ -24,7 +25,6 @@ export default function SimPage({ gameKey }: Props) {
   const bannerKeys = Object.keys(game.banners) as (keyof typeof game.banners)[];
   const [selectedBanner, setSelectedBanner] = useState<keyof typeof game.banners>(bannerKeys[0]);
   const banner = game.banners[selectedBanner];
-
   const [history, setHistory] = useState<Pull[]>([]);
   const [pity5, setPity5] = useState(0);
   const [pity4, setPity4] = useState(0);
@@ -34,19 +34,16 @@ export default function SimPage({ gameKey }: Props) {
   const [currency, setCurrency] = useState('GBP');
   const [designatedItem, setDesignatedItem] = useState<string | null>(null);
   const [pathPoints, setPathPoints] = useState(0);
-
   const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
   const [selectedWeapons, setSelectedWeapons] = useState<string[]>([]);
   const [charToAdd, setCharToAdd] = useState('');
   const [weaponToAdd, setWeaponToAdd] = useState('');
-
   const fiveStarHistory = history.filter(p => p.rarity === '5-Star');
   const totalPulls = history.length;
   const totalFiveStars = fiveStarHistory.length;
   const avgPullsPerFive = totalFiveStars ? (totalPulls / totalFiveStars).toFixed(1) : '-';
   const lastFiveStarIndex = history.findIndex(p => p.rarity === '5-Star');
   const lastFiveStarAt = lastFiveStarIndex !== -1 ? lastFiveStarIndex + 1 : '-';
-
   const rate = useExchangeRate(currency);
   const moneyDisp = (spentGBP * rate).toFixed(2);
   const symbol = currencySymbols[currency] || '£';
@@ -106,7 +103,6 @@ export default function SimPage({ gameKey }: Props) {
       }
       return [chosen, !featHit, newPath];
     };
-
 
   const pullOnce = (): Pull => {
     const g5 = pity5 + 1 >= banner.pity['5-Star'];
@@ -218,158 +214,212 @@ export default function SimPage({ gameKey }: Props) {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center p-4 bg-gray-100">
-      <div className="flex items-center justify-between w-full max-w-md mb-4">
-        <h1 className="text-2xl font-bold">{game.name} — {banner.name}</h1>
-        <div className="flex items-center">
-          <InfoModal
-            bannerType={banner.type}
-            rates={banner.rates}
-            pity={banner.pity}
-            softPity={banner.softPity}
-          />
-          <GlossaryModal />
+  <main className="relative min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] text-black overflow-hidden">
+    {/* Background swirl / particles */}
+    <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-black opacity-20 rounded-full filter blur-3xl animate-pulse z-0" />
+    <div className="absolute bottom-[-200px] right-[-200px] w-[500px] h-[500px] bg-emerald-400 opacity-20 rounded-full filter blur-2xl animate-pulse z-0" />
+
+    {/* Grid layout */}
+    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] gap-6 px-4 py-8 lg:px-12 xl:px-20">
+      
+      {/* Left Panel: Stats Dashboard */}
+      <aside className="space-y-6">
+        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md p-6">
+          <StatsDashboard history={history} banner={banner} gameKey={gameKey} />
         </div>
+      </aside>
+
+      {/* Right Panel: Main Controls */}
+      <section className="space-y-6">
+        {/* Header */}
+        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md text-center p-6">
+          <h1 className="text-3xl font-bold mb-2 text-black tracking-wide">{game.name} — {banner.name}</h1>
+          <div className="flex justify-center gap-4 mt-2">
+            <InfoModal
+              bannerType={banner.type}
+              rates={banner.rates}
+              pity={banner.pity}
+              softPity={banner.softPity}
+            />
+            <GlossaryModal />
+          </div>
+        </div>
+
+        {/* Dropdowns */}
+        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md grid sm:grid-cols-2 gap-4 p-6">
+          <div>
+            <label className="block text-sm font-medium mb-1 text-black">Banner</label>
+            <select
+              value={selectedBanner}
+              onChange={e => changeBanner(e.target.value as keyof typeof game.banners)}
+              className="w-full p-2 rounded border border-gray-300 bg-white text-black"
+            >
+              {bannerKeys.map(k => (
+                <option key={k} value={k}>{game.banners[k].name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1 text-black">Currency</label>
+            <select
+              value={currency}
+              onChange={e => setCurrency(e.target.value)}
+              className="w-full p-2 rounded border border-gray-300 bg-white text-black"
+            >
+              {supportedCurrencies.map(c => (
+                <option key={c} value={c}>{currencySymbols[c]} {c}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Chronicle / Weapon Config */}
+        {(banner.type === 'chronicle' || banner.type === 'weapon') && (
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-black">Customize Featured Items</h2>
+
+            {banner.type === 'chronicle' && (
+              <>
+                <div className="flex gap-2">
+                  <select
+                    value={charToAdd}
+                    onChange={e => setCharToAdd(e.target.value)}
+                    className="flex-1 p-2 rounded border border-gray-300 bg-white text-black"
+                  >
+                    <option value="">Select Character</option>
+                    {allCharacters.filter((c: string) => !selectedCharacters.includes(c)).map((char: string) => (
+                      <option key={char} value={char}>{char}</option>
+                    ))}
+                  </select>
+                  <button onClick={() => handleAdd(charToAdd, 'char')} disabled={!charToAdd} className="bg-emerald-500 hover:bg-emerald-600 text-black px-4 py-2 rounded transition">Add</button>
+                </div>
+
+                <div className="space-y-1">
+                  {selectedCharacters.map((char) => (
+                    <div key={char} className="flex justify-between items-center bg-white bg-opacity-20 px-3 py-1 rounded">
+                      <span>{char}</span>
+                      <button onClick={() => handleRemove(char, 'char')} className="text-red-400 font-bold">×</button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex gap-2 mt-4">
+                  <select
+                    value={weaponToAdd}
+                    onChange={e => setWeaponToAdd(e.target.value)}
+                    className="flex-1 p-2 rounded border border-gray-300 bg-white text-black"
+                  >
+                    <option value="">Select Weapon</option>
+                    {allWeapons.filter((w: string) => !selectedWeapons.includes(w)).map((weap: string) => (
+                      <option key={weap} value={weap}>{weap}</option>
+                    ))}
+                  </select>
+                  <button onClick={() => handleAdd(weaponToAdd, 'weapon')} disabled={!weaponToAdd} className="bg-emerald-500 hover:bg-emerald-600 text-black px-4 py-2 rounded transition">Add</button>
+                </div>
+
+                <div className="space-y-1">
+                  {selectedWeapons.map((weap) => (
+                    <div key={weap} className="flex justify-between items-center bg-white bg-opacity-20 px-3 py-1 rounded">
+                      <span>{weap}</span>
+                      <button onClick={() => handleRemove(weap, 'weapon')} className="text-red-400 font-bold">×</button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Designated */}
+            <div>
+              <label className="block text-sm font-semibold mb-1 text-black">Designated 5★ Item</label>
+              <select
+                className="w-full p-2 rounded border border-gray-300 bg-white text-black"
+                value={designatedItem || ''}
+                onChange={e => setDesignatedItem(e.target.value)}
+              >
+                <option value="">None</option>
+                {(banner.type === 'chronicle'
+                  ? [...selectedCharacters, ...selectedWeapons]
+                  : banner.featured['5-Star']
+                ).map((item: string) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
+              <p className="text-sm text-black mt-1">Path Points: {pathPoints}</p>
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-center gap-4">
+          <button onClick={onePull} className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">One Pull</button>
+          <button onClick={tenPull} className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-lg transition">Ten Pulls</button>
+        </div>
+
+        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md text-sm p-6 space-y-2">
+          <p>💸 <strong>{symbol}{moneyDisp}</strong> spent</p>
+          <p>Pity: 5★ <strong>{pity5}/{banner.pity['5-Star']}</strong> | 4★ <strong>{pity4}/{banner.pity['4-Star']}</strong></p>
+          <div className="flex gap-3 mt-3">
+            <button onClick={() => {
+              setHistory([]); setPity5(0); setPity4(0);
+              setLost5(false); setLost4(false);
+              setSpent(0); setPathPoints(0);
+            }} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">Clear Session</button>
+
+            <button
+              onClick={() => {
+                const data = {
+                  pulls: history,
+                  currency,
+                  spent: `${symbol}${moneyDisp}`,
+                  totalPulls,
+                  totalFiveStars,
+                  avgPullsPerFive,
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'gacha_session.json';
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+            >
+              Export Session
+            </button>
+          </div>
+        </div>
+
+          <div className='mt-4'>
+                <SummaryBox
+          totalPulls={totalPulls}
+          totalFiveStars={totalFiveStars}
+          avgPullsPerFive={avgPullsPerFive}
+          lastFiveStarAt={lastFiveStarAt}
+          expectedFiveStars={expectedFiveStars}
+          luckMessage={luckMessage}
+          currency={currency}
+          moneyDisp={moneyDisp}
+        />
       </div>
 
-      <select value={selectedBanner} onChange={e => changeBanner(e.target.value as keyof typeof game.banners)} className="p-2 border rounded mb-3">
-        {bannerKeys.map(k => (
-          <option key={k} value={k}>{game.banners[k].name}</option>
-        ))}
-      </select>
-
-      <select value={currency} onChange={e => setCurrency(e.target.value)} className="p-2 border rounded mb-4">
-        {supportedCurrencies.map(c => (
-          <option key={c} value={c}>{currencySymbols[c]} {c}</option>
-        ))}
-      </select>
-
-      {(banner.type === 'chronicle' || banner.type === 'weapon') && (
-        <div className="mb-4 w-full max-w-md">
-          {banner.type === 'chronicle' && (
-            <>
-              <div className="flex mb-2">
-                <select value={charToAdd} onChange={e => setCharToAdd(e.target.value)} className="flex-1 border rounded p-2 mr-2">
-                  <option value="">Select Character</option>
-                  {allCharacters.filter((c: string) => !selectedCharacters.includes(c)).map((char: string) => (
-                    <option key={char} value={char}>{char}</option>
-                  ))}
-                </select>
-                <button onClick={() => handleAdd(charToAdd, 'char')} disabled={!charToAdd} className="bg-green-600 text-white px-3 rounded">Add</button>
-              </div>
-              <div className="mb-3 text-sm">
-                {selectedCharacters.map((char) => (
-                  <div key={char} className="flex justify-between border p-1 rounded mb-1 bg-white">
-                    {char} <button onClick={() => handleRemove(char, 'char')} className="text-red-500">×</button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex mb-2">
-                <select value={weaponToAdd} onChange={e => setWeaponToAdd(e.target.value)} className="flex-1 border rounded p-2 mr-2">
-                  <option value="">Select Weapon</option>
-                  {allWeapons.filter((w: string) => !selectedWeapons.includes(w)).map((weap: string) => (
-                    <option key={weap} value={weap}>{weap}</option>
-                  ))}
-                </select>
-                <button onClick={() => handleAdd(weaponToAdd, 'weapon')} disabled={!weaponToAdd} className="bg-green-600 text-white px-3 rounded">Add</button>
-              </div>
-              <div className="mb-3 text-sm">
-                {selectedWeapons.map((weap) => (
-                  <div key={weap} className="flex justify-between border p-1 rounded mb-1 bg-white">
-                    {weap} <button onClick={() => handleRemove(weap, 'weapon')} className="text-red-500">×</button>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          <label className="block mb-1">Designated 5★ Item:</label>
-          <select className="w-full border p-2 rounded" value={designatedItem || ''} onChange={e => setDesignatedItem(e.target.value)}>
-            <option value="">None</option>
-            {(banner.type === 'chronicle'
-              ? [...selectedCharacters, ...selectedWeapons]
-              : banner.featured['5-Star']
-            ).map((item: string) => (
-              <option key={item} value={item}>{item}</option>
+        {/* Pull History */}
+        <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-md p-6">
+          <h2 className="text-lg font-semibold text-black mb-2">Pull History</h2>
+          <ul className="max-h-[300px] overflow-y-auto space-y-1 text-sm text-black">
+            {history.map((p, i) => (
+              <li key={i} className="border-b border-white/20 pb-1 last:border-0">
+                {p.rarity === '5-Star' && <span className="text-yellow-300 font-bold">⭐️⭐️⭐️⭐️⭐️ </span>}
+                {p.rarity === '4-Star' && <span className="text-purple-300 font-bold">⭐️⭐️⭐️⭐️ </span>}
+                {p.rarity === '3-Star' && <span className="text-gray-300">⭐️⭐️⭐️ </span>}
+                {p.name}
+              </li>
             ))}
-          </select>
-          <p className="text-sm mt-1 text-gray-600">Path Points: {pathPoints}</p>
+          </ul>
         </div>
-      )}
+      </section>
+    </div>
+  </main>
+);
 
-      <div className="flex gap-4 mb-5">
-        <button onClick={onePull} className="px-5 py-2 bg-purple-600 text-white rounded">One Pull</button>
-        <button onClick={tenPull} className="px-5 py-2 bg-purple-800 text-white rounded">Ten Pulls</button>
-      </div>
-
-      <p className="mb-2">Money spent: <strong>{symbol}{moneyDisp}</strong></p>
-      <p className="mb-4">Pity 5★ {pity5}/{banner.pity['5-Star']} &nbsp;|&nbsp; Pity 4★ {pity4}/{banner.pity['4-Star']}</p>
-
-            <div className="flex gap-4 mb-3">
-        <button onClick={() => {
-          setHistory([]); setPity5(0); setPity4(0);
-          setLost5(false); setLost4(false);
-          setSpent(0); setPathPoints(0);
-        }} className="px-4 py-1 bg-red-600 text-white rounded">Clear Session</button>
-
-        <button
-          onClick={() => {
-            const data = {
-              pulls: history,
-              currency,
-              spent: `${symbol}${moneyDisp}`,
-              totalPulls,
-              totalFiveStars,
-              avgPullsPerFive,
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'gacha_session.json';
-            a.click();
-            URL.revokeObjectURL(url);
-          }}
-          className="px-4 py-1 bg-blue-600 text-white rounded"
-        >
-          Export Session
-        </button>
-      </div>
-
-            <div className="mb-4 text-sm bg-white p-4 rounded shadow w-full max-w-md">
-        <p>Total Pulls: <strong>{totalPulls}</strong></p>
-        <p>Total 5★ Pulled: <strong>{totalFiveStars}</strong></p>
-        <p>Average Pulls per 5★: <strong>{avgPullsPerFive}</strong></p>
-        <p>Last 5★ was <strong>{lastFiveStarAt}</strong> pulls ago</p>
-          <hr className="my-3" />
-        <p>Statistically Expected 5★s: <strong>{expectedFiveStars}</strong></p>
-        <p>{luckMessage}</p>
-
-        {spentGBP >= 200 ? (
-        <p className="mt-2 text-red-700 font-bold">🚨 You've spent over £200 — that’s console money!</p>
-      ) : spentGBP >= 100 ? (
-        <p className="mt-2 text-red-600 font-bold">⚠️ You’ve simulated spending over £100.</p>
-      ) : spentGBP >= 50 ? (
-        <p className="mt-2 text-yellow-600 font-semibold">⚠️ You’ve spent over £50 — that’s a full-priced game.</p>
-      ) : null}
-      </div>
-
-      <StatsDashboard history={history} banner={banner} gameKey={gameKey} />
-
-      <div className="w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-2">Pull History</h2>
-        <ul className="bg-white p-4 rounded shadow max-h-[300px] overflow-y-auto space-y-1">
-          {history.map((p, i) => (
-            <li key={i} className="border-b last:border-0 pb-1">
-              {p.rarity === '5-Star' && '⭐️⭐️⭐️⭐️⭐️ '}
-              {p.rarity === '4-Star' && '⭐️⭐️⭐️⭐️ '}
-              {p.rarity === '3-Star' && '⭐️⭐️⭐️ '}
-              {p.name}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </main>
-  );
 }

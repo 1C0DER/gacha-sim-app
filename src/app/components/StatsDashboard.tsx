@@ -1,15 +1,32 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import {Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement, Filler} from 'chart.js';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+} from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import type { Chart as ChartInstance } from 'chart.js';
 import { GameKey } from '@/lib/gachaData';
 
 ChartJS.register(
-  ArcElement, Tooltip, Legend,
-  BarElement, CategoryScale, LinearScale,
-  PointElement, LineElement, Filler
+  ArcElement,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Filler
 );
 
 type Rarity = '5-Star' | '4-Star' | '3-Star';
@@ -108,250 +125,266 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
   }, [history]);
 
   return (
-    <div className="mt-6 w-full max-w-3xl mx-auto space-y-6">
-
+    <div className="mt-6 w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Rarity */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-white p-3 rounded-2xl shadow-md">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="font-semibold">Rarity Distribution (4★ & 5★)</h3>
-          <div className="space-x-2">
-            <button onClick={() => toggle('rarity')} className="text-sm text-blue-600">Toggle</button>
-            <button onClick={() => downloadChart('rarity')} className="text-sm text-green-600">Export</button>
+          <h3 className="font-semibold text-sm">Rarity Distribution (4★ & 5★)</h3>
+          <div className="space-x-2 text-xs">
+            <button onClick={() => toggle('rarity')} className="text-blue-600">Toggle</button>
+            <button onClick={() => downloadChart('rarity')} className="text-green-600">Export</button>
           </div>
         </div>
         {!collapsed.rarity && (
-          <Pie
-            ref={rarityRef}
-            data={{
-              labels: ['5★', '4★'],
-              datasets: [{
-                data: [rarityCount['5-Star'] || 0, rarityCount['4-Star'] || 0],
-                backgroundColor: ['#facc15', '#a78bfa'],
-              }]
-            }}
-          />
+          <div className="w-full h-[250px]">
+            <Pie
+              ref={rarityRef}
+              data={{
+                labels: ['5★', '4★'],
+                datasets: [{
+                  data: [rarityCount['5-Star'] || 0, rarityCount['4-Star'] || 0],
+                  backgroundColor: ['#facc15', '#a78bfa'],
+                }]
+              }}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
+          </div>
         )}
       </div>
 
       {/* Featured */}
       {featuredList.length > 0 && (
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Featured vs Off-Banner 5★ Pulls</h3>
-            <div className="space-x-2">
-              <button onClick={() => toggle('featured')} className="text-sm text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('featured')} className="text-sm text-green-600">Export</button>
+            <h3 className="font-semibold text-sm">Featured vs Off-Banner 5★ Pulls</h3>
+            <div className="space-x-2 text-xs">
+              <button onClick={() => toggle('featured')} className="text-blue-600">Toggle</button>
+              <button onClick={() => downloadChart('featured')} className="text-green-600">Export</button>
             </div>
           </div>
           {!collapsed.featured && (
-            <Bar
-              ref={featuredRef}
-              data={{
-                labels: ['Featured 5★', 'Off-Banner 5★'],
-                datasets: [{
-                  label: 'Count',
-                  data: [featuredPulls, offBannerPulls],
-                  backgroundColor: ['#34d399', '#f87171'],
-                }]
-              }}
-              options={{
-                responsive: true,
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-              }}
-            />
+            <div className="w-full h-[250px]">
+              <Bar
+                ref={featuredRef}
+                data={{
+                  labels: ['Featured 5★', 'Off-Banner 5★'],
+                  datasets: [{
+                    label: 'Count',
+                    data: [featuredPulls, offBannerPulls],
+                    backgroundColor: ['#34d399', '#f87171'],
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }}
+              />
+            </div>
           )}
         </div>
       )}
 
-      {/* Pity Histogram */}
+      {/* Pity */}
       {pityGaps.length > 0 && (
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Pity Histogram (Pulls Between 5★s)</h3>
-            <div className="space-x-2">
-              <button onClick={() => toggle('pity')} className="text-sm text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('pity')} className="text-sm text-green-600">Export</button>
+            <h3 className="font-semibold text-sm">Pity Histogram (Pulls Between 5★s)</h3>
+            <div className="space-x-2 text-xs">
+              <button onClick={() => toggle('pity')} className="text-blue-600">Toggle</button>
+              <button onClick={() => downloadChart('pity')} className="text-green-600">Export</button>
             </div>
           </div>
           {!collapsed.pity && (
-            <Bar
-              ref={pityRef}
-              data={{
-                labels: pityGaps.map((_, i) => `5★ #${i + 2}`),
-                datasets: [{
-                  label: 'Pulls Since Last 5★',
-                  data: pityGaps,
-                  backgroundColor: '#60a5fa',
-                }]
-              }}
-              options={{
-                responsive: true,
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 5 } } }
-              }}
-            />
+            <div className="w-full h-[250px]">
+              <Bar
+                ref={pityRef}
+                data={{
+                  labels: pityGaps.map((_, i) => `5★ #${i + 2}`),
+                  datasets: [{
+                    label: 'Pulls Since Last 5★',
+                    data: pityGaps,
+                    backgroundColor: '#60a5fa',
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: { y: { beginAtZero: true, ticks: { stepSize: 5 } } }
+                }}
+              />
+            </div>
           )}
         </div>
       )}
 
-      {/* Spending Line */}
+      {/* Spend */}
       {spendingData.length > 0 && (
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Cumulative Spending Over Time</h3>
-            <div className="space-x-2">
-              <button onClick={() => toggle('spend')} className="text-sm text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('spend')} className="text-sm text-green-600">Export</button>
+            <h3 className="font-semibold text-sm">Cumulative Spending Over Time</h3>
+            <div className="space-x-2 text-xs">
+              <button onClick={() => toggle('spend')} className="text-blue-600">Toggle</button>
+              <button onClick={() => downloadChart('spend')} className="text-green-600">Export</button>
             </div>
           </div>
           {!collapsed.spend && (
-            <Line
-              ref={spendRef}
-              data={{
-                labels: spendingData.map(p => p.x),
-                datasets: [{
-                  label: '£ Spent',
-                  data: spendingData.map(p => p.y),
-                  borderColor: '#f97316',
-                  backgroundColor: 'rgba(252, 211, 77, 0.3)',
-                  fill: true,
-                  tension: 0.3,
-                }]
-              }}
-              options={{
-                responsive: true,
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      callback: (val: number | string) => `£${Number(val).toFixed(0)}`
+            <div className="w-full h-[250px]">
+              <Line
+                ref={spendRef}
+                data={{
+                  labels: spendingData.map(p => p.x),
+                  datasets: [{
+                    label: '£ Spent',
+                    data: spendingData.map(p => p.y),
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(252, 211, 77, 0.3)',
+                    fill: true,
+                    tension: 0.3,
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: (val: number | string) => `£${Number(val).toFixed(0)}`
+                      }
                     }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            </div>
           )}
         </div>
       )}
 
-      {/* Pull Timeline */}
+      {/* Timeline */}
       {pullTimeline.length > 0 && (
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Pull Timeline by Rarity</h3>
-            <div className="space-x-2">
-              <button onClick={() => toggle('timeline')} className="text-sm text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('timeline')} className="text-sm text-green-600">Export</button>
+            <h3 className="font-semibold text-sm">Pull Timeline by Rarity</h3>
+            <div className="space-x-2 text-xs">
+              <button onClick={() => toggle('timeline')} className="text-blue-600">Toggle</button>
+              <button onClick={() => downloadChart('timeline')} className="text-green-600">Export</button>
             </div>
           </div>
           {!collapsed.timeline && (
-            <Line
-              ref={timelineRef}
-              data={{
-                labels: pullTimeline.map(p => p.x),
-                datasets: [{
-                  label: 'Rarity (3★=1, 4★=2, 5★=3)',
-                  data: pullTimeline.map(p => p.y),
-                  pointRadius: 4,
-                  pointHoverRadius: 6,
-                  pointBackgroundColor: pullTimeline.map(p =>
-                    p.y === 3 ? '#facc15' : p.y === 2 ? '#a78bfa' : '#e5e7eb'
-                  ),
-                  pointBorderColor: '#111',
-                  borderColor: '#6b7280',
-                  backgroundColor: '#cbd5e166',
-                  fill: false,
-                  tension: 0.2,
-                }]
-              }}
-              options={{
-                responsive: true,
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: (ctx) => {
-                        const index = ctx.dataIndex;
-                        const point = pullTimeline[index];
-                        return `${point.rarity}: ${point.label}`;
+            <div className="w-full h-[250px]">
+              <Line
+                ref={timelineRef}
+                data={{
+                  labels: pullTimeline.map(p => p.x),
+                  datasets: [{
+                    label: 'Rarity (3★=1, 4★=2, 5★=3)',
+                    data: pullTimeline.map(p => p.y),
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: pullTimeline.map(p =>
+                      p.y === 3 ? '#facc15' : p.y === 2 ? '#a78bfa' : '#e5e7eb'
+                    ),
+                    pointBorderColor: '#111',
+                    borderColor: '#6b7280',
+                    backgroundColor: '#cbd5e166',
+                    fill: false,
+                    tension: 0.2,
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: (ctx) => {
+                          const index = ctx.dataIndex;
+                          const point = pullTimeline[index];
+                          return `${point.rarity}: ${point.label}`;
+                        }
                       }
                     }
+                  },
+                  scales: {
+                    y: {
+                      ticks: {
+                        stepSize: 1,
+                        callback: (tickValue: string | number) => {
+                          const v = Number(tickValue);
+                          return ['?', '3★', '4★', '5★'][v] || '';
+                        }
+                      },
+                      min: 0,
+                      max: 4
+                    }
                   }
-                },
-                scales: {
-                  y: {
-                    ticks: {
-                      stepSize: 1,
-                      callback: (tickValue: string | number) => {
-                        const v = Number(tickValue);
-                        return ['?', '3★', '4★', '5★'][v] || '';
-                      }
-                    },
-                    min: 0,
-                    max: 4
-                  }
-                }
-              }}
-            />
+                }}
+              />
+            </div>
           )}
         </div>
       )}
 
-      {/* Probability Curve */}
+      {/* Probability */}
       {banner.softPity?.enabled && (
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white p-3 rounded-2xl shadow-md">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Cumulative 5★ Probability Curve</h3>
-            <div className="space-x-2">
-              <button onClick={() => toggle('prob')} className="text-sm text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('prob')} className="text-sm text-green-600">Export</button>
+            <h3 className="font-semibold text-sm">Cumulative 5★ Probability Curve</h3>
+            <div className="space-x-2 text-xs">
+              <button onClick={() => toggle('prob')} className="text-blue-600">Toggle</button>
+              <button onClick={() => downloadChart('prob')} className="text-green-600">Export</button>
             </div>
           </div>
           {!collapsed.prob && (
-            <Line
-              ref={probRef}
-              data={{
-                labels: Array.from({ length: banner.pity['5-Star'] }, (_, i) => i + 1),
-                datasets: [{
-                  label: 'Chance of 5★ at this pull',
-                  data: Array.from({ length: banner.pity['5-Star'] }, (_, i) => {
-                    const pity = i + 1;
-                    const base = banner.rates['5-Star'];
-                    if (pity < banner.softPity.start) return base * 100;
-                    const slope = (banner.softPity.maxRate - base) / (banner.pity['5-Star'] - banner.softPity.start);
-                    const rate = Math.min(base + slope * (pity - (banner.softPity.start - 1)), banner.softPity.maxRate);
-                    return rate * 100;
-                  }),
-                  borderColor: '#22d3ee',
-                  backgroundColor: 'rgba(34, 211, 238, 0.2)',
-                  fill: true,
-                  tension: 0.3,
-                }]
-              }}
-              options={{
-                responsive: true,
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      callback: (val) => val + '%'
+            <div className="w-full h-[250px]">
+              <Line
+                ref={probRef}
+                data={{
+                  labels: Array.from({ length: banner.pity['5-Star'] }, (_, i) => i + 1),
+                  datasets: [{
+                    label: 'Chance of 5★ at this pull',
+                    data: Array.from({ length: banner.pity['5-Star'] }, (_, i) => {
+                      const pity = i + 1;
+                      const base = banner.rates['5-Star'];
+                      if (pity < banner.softPity.start) return base * 100;
+                      const slope = (banner.softPity.maxRate - base) / (banner.pity['5-Star'] - banner.softPity.start);
+                      const rate = Math.min(base + slope * (pity - (banner.softPity.start - 1)), banner.softPity.maxRate);
+                      return rate * 100;
+                    }),
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.2)',
+                    fill: true,
+                    tension: 0.3,
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: (val) => val + '%'
+                      },
+                      title: {
+                        display: true,
+                        text: 'Chance of 5★',
+                      }
                     },
-                    title: {
-                      display: true,
-                      text: 'Chance of 5★',
-                    }
-                  },
-                  x: {
-                    title: {
-                      display: true,
-                      text: 'Pull Number (since last 5★)',
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Pull Number (since last 5★)',
+                      }
                     }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            </div>
           )}
         </div>
       )}
-
     </div>
   );
 }

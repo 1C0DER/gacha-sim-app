@@ -36,8 +36,7 @@ export default function InfoModal({ bannerType, rates, pity, softPity }: Props) 
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="text-sm text-blue-600 underline underline-offset-2"
-      >
+        className="text-sm text-blue-600 underline underline-offset-2">
         ℹ️ How this banner works
       </button>
 
