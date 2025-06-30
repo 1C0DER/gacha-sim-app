@@ -154,12 +154,9 @@ export const gachaRates = {
         '4-Star': ['Tingyun', 'March 7th', 'Yukong'],
       },
       pool: {
-        '5-Star': ['Phainon', 'Bronya', 'Gepard', 'Himeko', 'Welt', 'Yanqing'],
-        '4-Star': [
-          'Tingyun', 'March 7th', 'Yukong', 'Asta', 'Natasha', 'Sampo',
-          'Serval', 'Pela', 'Hook'
-        ],
-        '3-Star': ['Darting Arrow', 'Adversarial', 'Collapsing Sky', 'Fine Fruit'],
+        '5-Star': ['Bailu', 'Blade', 'Bronya', 'Clara', 'Fu Xuan', 'Gepard', 'Himeko', 'Seele', 'Welt', 'Yanqing'],
+        '4-Star': ['Arlan', 'Asta', 'Dan Heng', 'Gallagher', 'Guinaifen', 'Hanya', 'Herta', 'Hook', 'Luka', 'Lynx', 'March 7th (Preservation)', 'Moze', 'Misha', 'Natasha', 'Pela', 'Sampo', 'Serval', 'Tingyun', 'Yukong', 'A Secret Vow', 'After the C Fall', 'Boundless Choreo', 'Concert for Two', 'Dance! Dance! Dance!', 'Day One of My New Life', 'Dream\'s Montage', 'Eyes of the Prey', 'Geniuses\' Greetings', 'Geniuses\' Repose', 'Good Night and Sleep Well', 'Indelible Promise', 'Landau\'s Choice', 'Make the World Clamor', 'Memories of the Past', 'Only Silence Remains', 'Perfect Timing', 'Planetary Rendezvous', 'Poised to Bloom', 'Post-Op Conversation', 'Resolution Shines As Pearls of Sweat', 'Shadowed by Night', 'Shared Feeling', 'Subscribe for More!', 'Swordplay', 'The Birth of the Self', 'The Moles Welcome You', 'Trend of the Universal Market', 'Under the Blue Sky'],
+        '3-Star': ['Adversarial', 'Amber', 'Arrows', 'Chorus', 'Collapsing Sky', 'Cornucopia', 'Darting Arrow', 'Data Bank', 'Defense', 'Fine Fruit', 'Hidden Shadow', 'Loop', 'Mediation', 'Meshing Cogs', 'Multiplication', 'Mutual Demise', 'Passkey', 'Pioneering', 'Reminiscence', 'Sagacity', 'Shadowburn', 'Shattered Home', 'Void'],
       }
     },
 
@@ -191,12 +188,9 @@ export const gachaRates = {
         ],
       },
       pool: {
-        '5-Star': ['Thus Burns the Dawn', 'Before Dawn', 'Moment of Victory'],
-        '4-Star': [
-          'The Story\'s Next Page', 'Planetary Rendezvous', 'Under the Blue Sky',
-          'Past and Future', 'Only Silence Remains', 'Woof! Walk Time!',
-        ],
-        '3-Star': ['Amber', 'Void', 'Meshing Cogs', 'Cornucopia'],
+        '5-Star': ['Thus Burns the Dawn','Moment of Victory', 'Time Waits for No one', 'Sleep Like the Dead', 'In the Name of the World', 'But the Battle isnt Over', 'Something Irreplaceable', 'Night On the Milky Way'],
+        '4-Star': ['Arlan', 'Asta', 'Dan Heng', 'Gallagher', 'Guinaifen', 'Hanya', 'Herta', 'Hook', 'Luka', 'Lynx', 'March 7th (Preservation)', 'Moze', 'Misha', 'Natasha', 'Pela', 'Sampo', 'Serval', 'Tingyun', 'Yukong', 'A Secret Vow', 'After the C Fall', 'Boundless Choreo', 'Concert for Two', 'Dance! Dance! Dance!', 'Day One of My New Life', 'Dream\'s Montage', 'Eyes of the Prey', 'Geniuses\' Greetings', 'Geniuses\' Repose', 'Good Night and Sleep Well', 'Indelible Promise', 'Landau\'s Choice', 'Make the World Clamor', 'Memories of the Past', 'Only Silence Remains', 'Perfect Timing', 'Planetary Rendezvous', 'Poised to Bloom', 'Post-Op Conversation', 'Resolution Shines As Pearls of Sweat', 'Shadowed by Night', 'Shared Feeling', 'Subscribe for More!', 'Swordplay', 'The Birth of the Self', 'The Moles Welcome You', 'Trend of the Universal Market', 'Under the Blue Sky'],
+        '3-Star': ['Adversarial', 'Amber', 'Arrows', 'Chorus', 'Collapsing Sky', 'Cornucopia', 'Darting Arrow', 'Data Bank', 'Defense', 'Fine Fruit', 'Hidden Shadow', 'Loop', 'Mediation', 'Meshing Cogs', 'Multiplication', 'Mutual Demise', 'Passkey', 'Pioneering', 'Reminiscence', 'Sagacity', 'Shadowburn', 'Shattered Home', 'Void'],
       }
     },
 
@@ -224,24 +218,13 @@ export const gachaRates = {
         '4-Star': [],
       },
       pool: {
-        '5-Star': [
-          'Bronya', 'Gepard', 'Himeko', 'Welt', 'Yanqing',
-          'Before Dawn', 'Moment of Victory', 'Sleep Like the Dead'
-        ],
-        '4-Star': [
-          'Asta', 'Natasha', 'Sampo', 'Serval', 'Pela', 'Hook',
-          'Only Silence Remains', 'Past and Future', 'Quid Pro Quo'
-        ],
-        '3-Star': [
-          'Darting Arrow', 'Adversarial', 'Collapsing Sky',
-          'Fine Fruit', 'Amber', 'Meshing Cogs', 'Cornucopia'
-        ],
+        '5-Star': ['Bronya', 'Gepard', 'Himeko', 'Welt', 'Yanqing', 'Moment of Victory', 'Time Waits for No one', 'Sleep Like the Dead', 'In the Name of the World', 'But the Battle isnt Over', 'Something Irreplaceable', 'Night On the Milky Way'],
+        '4-Star': ['Arlan', 'Asta', 'Dan Heng', 'Gallagher', 'Guinaifen', 'Hanya', 'Herta', 'Hook', 'Luka', 'Lynx', 'March 7th (Preservation)', 'Moze', 'Misha', 'Natasha', 'Pela', 'Sampo', 'Serval', 'Tingyun', 'Yukong', 'A Secret Vow', 'After the C Fall', 'Boundless Choreo', 'Concert for Two', 'Dance! Dance! Dance!', 'Day One of My New Life', 'Dream\'s Montage', 'Eyes of the Prey', 'Geniuses\' Greetings', 'Geniuses\' Repose', 'Good Night and Sleep Well', 'Indelible Promise', 'Landau\'s Choice', 'Make the World Clamor', 'Memories of the Past', 'Only Silence Remains', 'Perfect Timing', 'Planetary Rendezvous', 'Poised to Bloom', 'Post-Op Conversation', 'Resolution Shines As Pearls of Sweat', 'Shadowed by Night', 'Shared Feeling', 'Subscribe for More!', 'Swordplay', 'The Birth of the Self', 'The Moles Welcome You', 'Trend of the Universal Market', 'Under the Blue Sky'],
+        '3-Star': ['Adversarial', 'Amber', 'Arrows', 'Chorus', 'Collapsing Sky', 'Cornucopia', 'Darting Arrow', 'Data Bank', 'Defense', 'Fine Fruit', 'Hidden Shadow', 'Loop', 'Mediation', 'Meshing Cogs', 'Multiplication', 'Mutual Demise', 'Passkey', 'Pioneering', 'Reminiscence', 'Sagacity', 'Shadowburn', 'Shattered Home', 'Void'],
       }
     },
   },
 },
-
-
   Custom: {
     name: 'Custom Game',
     banners: {
