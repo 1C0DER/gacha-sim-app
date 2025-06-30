@@ -128,21 +128,119 @@ export const gachaRates = {
         },
       },
   Honkai: {
-    name: 'Honkai: Star Rail',
-    banners: {
-      Default: {
-        name: 'Default Honkai Banner',
-        type: 'standard',
-        costPerPullGBP: 2.30,
-        currencyPerPull: 160,
-        rates: { '5-Star': 0.007, '4-Star': 0.060, '3-Star': 0.933 },
-        pity: { '5-Star': 90, '4-Star': 10 },
-        softPity: { enabled: true, start: 75, maxRate: 0.35 },
-        featured: { '5-Star': [], '4-Star': [] },
-        pool: { '5-Star': [], '4-Star': [], '3-Star': [] },
+  name: 'Honkai: Star Rail',
+  banners: {
+    Limited: {
+      name: 'To Evermore Burn as the Sun',
+      type: 'limited',
+      costPerPullGBP: 2.30,
+      currencyPerPull: 160,
+      rates: {
+        '5-Star': 0.006,
+        '4-Star': 0.051,
+        '3-Star': 0.943,
       },
+      pity: {
+        '5-Star': 90,
+        '4-Star': 10,
+      },
+      softPity: {
+        enabled: true,
+        start: 75,
+        maxRate: 0.324,
+      },
+      featured: {
+        '5-Star': ['Phainon'],
+        '4-Star': ['Tingyun', 'March 7th', 'Yukong'],
+      },
+      pool: {
+        '5-Star': ['Phainon', 'Bronya', 'Gepard', 'Himeko', 'Welt', 'Yanqing'],
+        '4-Star': [
+          'Tingyun', 'March 7th', 'Yukong', 'Asta', 'Natasha', 'Sampo',
+          'Serval', 'Pela', 'Hook'
+        ],
+        '3-Star': ['Darting Arrow', 'Adversarial', 'Collapsing Sky', 'Fine Fruit'],
+      }
+    },
+
+    Weapon: {
+      name: 'Brilliant Fixation',
+      type: 'weapon',
+      costPerPullGBP: 2.30,
+      currencyPerPull: 160,
+      rates: {
+        '5-Star': 0.008,
+        '4-Star': 0.066,
+        '3-Star': 0.926,
+      },
+      pity: {
+        '5-Star': 80,
+        '4-Star': 10,
+      },
+      softPity: {
+        enabled: true,
+        start: 65,
+        maxRate: 0.35,
+      },
+      featured: {
+        '5-Star': ['Thus Burns the Dawn'],
+        '4-Star': [
+          'The Story\'s Next Page',
+          'Planetary Rendezvous',
+          'Under the Blue Sky'
+        ],
+      },
+      pool: {
+        '5-Star': ['Thus Burns the Dawn', 'Before Dawn', 'Moment of Victory'],
+        '4-Star': [
+          'The Story\'s Next Page', 'Planetary Rendezvous', 'Under the Blue Sky',
+          'Past and Future', 'Only Silence Remains', 'Woof! Walk Time!',
+        ],
+        '3-Star': ['Amber', 'Void', 'Meshing Cogs', 'Cornucopia'],
+      }
+    },
+
+    Standard: {
+      name: 'Stellar Warp',
+      type: 'standard',
+      costPerPullGBP: 2.30,
+      currencyPerPull: 160,
+      rates: {
+        '5-Star': 0.006,
+        '4-Star': 0.051,
+        '3-Star': 0.943,
+      },
+      pity: {
+        '5-Star': 90,
+        '4-Star': 10,
+      },
+      softPity: {
+        enabled: true,
+        start: 75,
+        maxRate: 0.324,
+      },
+      featured: {
+        '5-Star': [],
+        '4-Star': [],
+      },
+      pool: {
+        '5-Star': [
+          'Bronya', 'Gepard', 'Himeko', 'Welt', 'Yanqing',
+          'Before Dawn', 'Moment of Victory', 'Sleep Like the Dead'
+        ],
+        '4-Star': [
+          'Asta', 'Natasha', 'Sampo', 'Serval', 'Pela', 'Hook',
+          'Only Silence Remains', 'Past and Future', 'Quid Pro Quo'
+        ],
+        '3-Star': [
+          'Darting Arrow', 'Adversarial', 'Collapsing Sky',
+          'Fine Fruit', 'Amber', 'Meshing Cogs', 'Cornucopia'
+        ],
+      }
     },
   },
+},
+
 
   Custom: {
     name: 'Custom Game',

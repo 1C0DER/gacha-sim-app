@@ -39,13 +39,15 @@ export default function SimPage({ gameKey }: Props) {
 
         <section className="space-y-5">
           <HeaderSection
-            gameName={sim.game.name}
-            bannerName={sim.banner.name}
-            bannerType={sim.banner.type}
-            rates={sim.banner.rates}
-            pity={sim.banner.pity}
-            softPity={sim.banner.softPity}
-          />
+  gameKey={gameKey}
+  gameName={sim.game.name}
+  bannerName={sim.banner.name}
+  bannerType={sim.banner.type}
+  rates={sim.banner.rates}
+  pity={sim.banner.pity}
+  softPity={sim.banner.softPity}
+/>
+
 
           <BannerCurrencySelect
             selectedBanner={sim.selectedBanner}
@@ -58,25 +60,25 @@ export default function SimPage({ gameKey }: Props) {
             onChangeCurrency={sim.onChangeCurrency}
           />
 
-          {(sim.banner.type === 'chronicle' || sim.banner.type === 'weapon') && (
-            <CustomizeFeaturedItems
-              bannerType={sim.banner.type}
-              selectedCharacters={sim.selectedCharacters}
-              selectedWeapons={sim.selectedWeapons}
-              allCharacters={sim.allCharacters}
-              allWeapons={sim.allWeapons}
-              designatedItem={sim.designatedItem}
-              pathPoints={sim.pathPoints}
-              charToAdd={sim.charToAdd}
-              weaponToAdd={sim.weaponToAdd}
-              setCharToAdd={sim.setCharToAdd}
-              setWeaponToAdd={sim.setWeaponToAdd}
-              handleAdd={sim.handleAdd}
-              handleRemove={sim.handleRemove}
-              handleDesignatedSelect={sim.setDesignatedItem}
-              featured5Stars={sim.getFeatured5Stars()}
-            />
-          )}
+{(sim.banner.type === 'chronicle' || (sim.banner.type === 'weapon' && gameKey === 'Genshin')) && (
+  <CustomizeFeaturedItems
+    bannerType={sim.banner.type}
+    selectedCharacters={sim.selectedCharacters}
+    selectedWeapons={sim.selectedWeapons}
+    allCharacters={sim.allCharacters}
+    allWeapons={sim.allWeapons}
+    designatedItem={sim.designatedItem}
+    pathPoints={sim.pathPoints}
+    charToAdd={sim.charToAdd}
+    weaponToAdd={sim.weaponToAdd}
+    setCharToAdd={sim.setCharToAdd}
+    setWeaponToAdd={sim.setWeaponToAdd}
+    handleAdd={sim.handleAdd}
+    handleRemove={sim.handleRemove}
+    handleDesignatedSelect={sim.setDesignatedItem}
+    featured5Stars={sim.getFeatured5Stars()}
+  />
+)}
 
           <PullButtons
             onOnePull={sim.onOnePull}

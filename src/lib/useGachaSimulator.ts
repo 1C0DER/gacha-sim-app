@@ -68,41 +68,56 @@ export function useGachaSimulator(gameKey: GameKey) {
 
 
   const handlePull = (
-    rar: Rarity,
-    pity: number,
-    lost5050: boolean,
-    localPath: number
-  ): [string, boolean, number] => {
-    const featured = getFeatured5Stars();
-    const fallback = banner.pool['5-Star'];
-    const bannerType = banner.type;
+  rarity: Rarity,
+  pity: number,
+  lost5050: boolean,
+  localPath: number
+): [string, boolean, number] => {
+  const featured = getFeatured5Stars();
+  const fallback = banner.pool['5-Star'];
+  const bannerType = banner.type;
 
-    const isGuaranteed = designatedItem && (
-      (bannerType === 'chronicle' && localPath >= 1) ||
-      (bannerType === 'weapon' && localPath >= 2)
-    );
-    if (isGuaranteed) return [designatedItem!, false, 0];
+  const isHonkaiWeapon = bannerType === 'weapon' && gameKey === 'Honkai';
+  const isGenshinWeapon = bannerType === 'weapon' && gameKey === 'Genshin';
+  const isChronicle = bannerType === 'chronicle';
 
-    let pool: readonly string[];
-    const featHit = lost5050 || Math.random() < 0.5;
+  const usingDesignated = isChronicle || isGenshinWeapon;
 
-    if (bannerType === 'chronicle') {
-      pool = featured.length ? featured : fallback;
-    } else {
-      pool = featHit && featured.length ? featured : fallback;
-    }
+  // ✅ Path guarantee
+  const isGuaranteed = usingDesignated && designatedItem && (
+    (isChronicle && localPath >= 1) ||
+    (isGenshinWeapon && localPath >= 2)
+  );
+  if (isGuaranteed) return [designatedItem!, false, 0];
 
-    const chosen = rand(pool);
+  // ✅ Determine if we hit featured
+  const featHit = lost5050 || Math.random() < (
+    isHonkaiWeapon ? 0.75 : 0.5
+  );
 
-    let newPath = localPath;
-    if (designatedItem && chosen !== designatedItem && (bannerType === 'chronicle' || bannerType === 'weapon')) {
+  let pool: readonly string[];
+
+  if (isChronicle) {
+    pool = featured.length ? featured : fallback;
+  } else {
+    pool = featHit && featured.length ? featured : fallback;
+  }
+
+  const chosen = rand(pool);
+  let newPath = localPath;
+
+  // ✅ Path tracking (only for banners that use designated items)
+  if (usingDesignated && designatedItem) {
+    if (chosen !== designatedItem) {
       newPath += 1;
-    } else if (chosen === designatedItem) {
+    } else {
       newPath = 0;
     }
+  }
 
-    return [chosen, !featHit, newPath];
-  };
+  return [chosen, !featHit, newPath];
+};
+
 
   const pullOnce = (): Pull => {
     const g5 = pity5 + 1 >= banner.pity['5-Star'];
