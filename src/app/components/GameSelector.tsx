@@ -5,23 +5,28 @@ import { gachaRates, GameKey } from '@/lib/gachaData';
 export default function GameSelector() {
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    router.push(`/gacha/${e.target.value}`);  
+  const handleClick = (key: GameKey) => {
+    router.push(`/gacha/${key}`);
   };
 
   return (
-    <div className="mb-8 w-full max-w-xs">
-      <select
-        defaultValue=""
-        onChange={handleChange}
-        className="w-full p-2 text-black rounded border bg-white">
-        <option value="" disabled>Select a Game…</option>
-        {Object.keys(gachaRates).map((key) => (
-          <option key={key} value={key}>
-            {gachaRates[key as GameKey].name}
-          </option>
+    <div className="overflow-x-auto">
+      <div className="flex flex-col gap-4">
+        {Object.entries(gachaRates).map(([key, data]) => (
+          <button
+            key={key}
+            onClick={() => handleClick(key as GameKey)}
+            className="flex flex-col items-center bg-white border border-gray-300 hover:border-blue-500 shadow-sm rounded-xl px-4 py-2 transition duration-200 min-w-[100px]"
+          >
+            <img
+              src={data.icon}
+              alt={data.name}
+              className="w-10 h-10 object-contain mb-1"
+            />
+            <span className="text-sm text-gray-800 text-center">{data.name}</span>
+          </button>
         ))}
-      </select>
+      </div>
     </div>
   );
 }

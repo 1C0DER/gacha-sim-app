@@ -36,7 +36,7 @@ export default function InfoModal({ bannerType, rates, pity, softPity, gameKey }
     } else if (bannerType === 'limited') {
   lines.push(`⭐️ 50% chance to get featured 5★. If you lose, the next is guaranteed.`);
 }
- else if (bannerType === 'weapon') {
+else if (bannerType === 'weapon') {
       if (isGenshin) {
         lines.push(`⭐️ 50% chance to get featured weapon.`);
         lines.push(`🎯 Guaranteed after 2 fails (Epitomized Path).`);

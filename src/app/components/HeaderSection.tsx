@@ -33,8 +33,7 @@ export default function HeaderSection({
           rates={rates}
           pity={pity}
           softPity={softPity}
-          gameKey={gameKey}
-        />
+          gameKey={gameKey}/>
         <GlossaryModal />
       </div>
     </div>

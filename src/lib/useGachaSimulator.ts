@@ -83,14 +83,12 @@ export function useGachaSimulator(gameKey: GameKey) {
 
   const usingDesignated = isChronicle || isGenshinWeapon;
 
-  // ✅ Path guarantee
   const isGuaranteed = usingDesignated && designatedItem && (
     (isChronicle && localPath >= 1) ||
     (isGenshinWeapon && localPath >= 2)
   );
   if (isGuaranteed) return [designatedItem!, false, 0];
 
-  // ✅ Determine if we hit featured
   const featHit = lost5050 || Math.random() < (
     isHonkaiWeapon ? 0.75 : 0.5
   );
@@ -106,7 +104,6 @@ export function useGachaSimulator(gameKey: GameKey) {
   const chosen = rand(pool);
   let newPath = localPath;
 
-  // ✅ Path tracking (only for banners that use designated items)
   if (usingDesignated && designatedItem) {
     if (chosen !== designatedItem) {
       newPath += 1;

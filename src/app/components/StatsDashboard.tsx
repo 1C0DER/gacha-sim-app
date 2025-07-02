@@ -1,18 +1,8 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-} from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, 
+        LinearScale, PointElement, LineElement, Filler,} from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import type { Chart as ChartInstance } from 'chart.js';
 import { GameKey } from '@/lib/gachaData';

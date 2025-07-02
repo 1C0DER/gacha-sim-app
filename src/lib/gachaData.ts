@@ -1,6 +1,7 @@
 export const gachaRates = {
   Genshin: {
     name: 'Genshin Impact',
+    icon: '/icons/genshin.png',
     banners: {
       Limited: {
         name: 'Limited Character Event Wish',
@@ -129,6 +130,7 @@ export const gachaRates = {
       },
   Honkai: {
   name: 'Honkai: Star Rail',
+  icon: '/icons/honkai.png',
   banners: {
     Limited: {
       name: 'To Evermore Burn as the Sun',
@@ -159,7 +161,6 @@ export const gachaRates = {
         '3-Star': ['Adversarial', 'Amber', 'Arrows', 'Chorus', 'Collapsing Sky', 'Cornucopia', 'Darting Arrow', 'Data Bank', 'Defense', 'Fine Fruit', 'Hidden Shadow', 'Loop', 'Mediation', 'Meshing Cogs', 'Multiplication', 'Mutual Demise', 'Passkey', 'Pioneering', 'Reminiscence', 'Sagacity', 'Shadowburn', 'Shattered Home', 'Void'],
       }
     },
-
     Weapon: {
       name: 'Brilliant Fixation',
       type: 'weapon',
@@ -193,7 +194,6 @@ export const gachaRates = {
         '3-Star': ['Adversarial', 'Amber', 'Arrows', 'Chorus', 'Collapsing Sky', 'Cornucopia', 'Darting Arrow', 'Data Bank', 'Defense', 'Fine Fruit', 'Hidden Shadow', 'Loop', 'Mediation', 'Meshing Cogs', 'Multiplication', 'Mutual Demise', 'Passkey', 'Pioneering', 'Reminiscence', 'Sagacity', 'Shadowburn', 'Shattered Home', 'Void'],
       }
     },
-
     Standard: {
       name: 'Stellar Warp',
       type: 'standard',
@@ -227,6 +227,7 @@ export const gachaRates = {
 },
   Custom: {
     name: 'Custom Game',
+  icon: '/icons/custom.jpg',
     banners: {
       Default: {
         name: 'Custom Standard Banner',
