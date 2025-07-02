@@ -208,6 +208,66 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
         </div>
       )}
 
+            {/* Probability */}
+      {banner.softPity?.enabled && (
+        <div className="bg-white p-3 rounded-2xl shadow-md">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-semibold text-sm">Cumulative 5★ Probability Curve</h3>
+            <div className="space-x-2 text-xs">
+              <button onClick={() => toggle('prob')} className="text-blue-600">Toggle</button>
+              <button onClick={() => downloadChart('prob')} className="text-green-600">Export</button>
+            </div>
+          </div>
+          {!collapsed.prob && (
+            <div className="w-full h-[250px]">
+              <Line
+                ref={probRef}
+                data={{
+                  labels: Array.from({ length: banner.pity['5-Star'] }, (_, i) => i + 1),
+                  datasets: [{
+                    label: 'Chance of 5★ at this pull',
+                    data: Array.from({ length: banner.pity['5-Star'] }, (_, i) => {
+                      const pity = i + 1;
+                      const base = banner.rates['5-Star'];
+                      if (pity < banner.softPity.start) return base * 100;
+                      const slope = (banner.softPity.maxRate - base) / (banner.pity['5-Star'] - banner.softPity.start);
+                      const rate = Math.min(base + slope * (pity - (banner.softPity.start - 1)), banner.softPity.maxRate);
+                      return rate * 100;
+                    }),
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.2)',
+                    fill: true,
+                    tension: 0.3,
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        callback: (val) => val + '%'
+                      },
+                      title: {
+                        display: true,
+                        text: 'Chance of 5★',
+                      }
+                    },
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Pull Number (since last 5★)',
+                      }
+                    }
+                  }
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Spend */}
       {spendingData.length > 0 && (
         <div className="bg-white p-3 rounded-2xl shadow-md">
@@ -307,66 +367,6 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                       },
                       min: 0,
                       max: 4
-                    }
-                  }
-                }}
-              />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Probability */}
-      {banner.softPity?.enabled && (
-        <div className="bg-white p-3 rounded-2xl shadow-md">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-sm">Cumulative 5★ Probability Curve</h3>
-            <div className="space-x-2 text-xs">
-              <button onClick={() => toggle('prob')} className="text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('prob')} className="text-green-600">Export</button>
-            </div>
-          </div>
-          {!collapsed.prob && (
-            <div className="w-full h-[250px]">
-              <Line
-                ref={probRef}
-                data={{
-                  labels: Array.from({ length: banner.pity['5-Star'] }, (_, i) => i + 1),
-                  datasets: [{
-                    label: 'Chance of 5★ at this pull',
-                    data: Array.from({ length: banner.pity['5-Star'] }, (_, i) => {
-                      const pity = i + 1;
-                      const base = banner.rates['5-Star'];
-                      if (pity < banner.softPity.start) return base * 100;
-                      const slope = (banner.softPity.maxRate - base) / (banner.pity['5-Star'] - banner.softPity.start);
-                      const rate = Math.min(base + slope * (pity - (banner.softPity.start - 1)), banner.softPity.maxRate);
-                      return rate * 100;
-                    }),
-                    borderColor: '#22d3ee',
-                    backgroundColor: 'rgba(34, 211, 238, 0.2)',
-                    fill: true,
-                    tension: 0.3,
-                  }]
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      ticks: {
-                        callback: (val) => val + '%'
-                      },
-                      title: {
-                        display: true,
-                        text: 'Chance of 5★',
-                      }
-                    },
-                    x: {
-                      title: {
-                        display: true,
-                        text: 'Pull Number (since last 5★)',
-                      }
                     }
                   }
                 }}
