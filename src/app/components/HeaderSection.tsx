@@ -2,6 +2,8 @@
 
 import InfoModal from './InfoModal';
 import GlossaryModal from './GlossaryModal';
+import type { Pull } from '@/lib/useCollectionTracker';
+import PullHistory from './PullHistory';
 
 interface Props {
   gameKey: string;
@@ -11,6 +13,7 @@ interface Props {
   rates: Record<string, number>;
   pity: Record<string, number>;
   softPity: { enabled: boolean; start: number; maxRate: number };
+  history: Pull[];
 }
 
 export default function HeaderSection({
@@ -20,8 +23,10 @@ export default function HeaderSection({
   bannerType,
   rates,
   pity,
-  softPity
+  softPity,
+  history
 }: Props) {
+
   return (
     <div className="bg-white rounded-2xl shadow-md text-center p-5 border border-gray-200">
       <h1 className="text-3xl font-bold mb-2 text-gray-800">
@@ -33,8 +38,10 @@ export default function HeaderSection({
           rates={rates}
           pity={pity}
           softPity={softPity}
-          gameKey={gameKey}/>
+          gameKey={gameKey}
+        />
         <GlossaryModal />
+        <PullHistory history={history} />
       </div>
     </div>
   );

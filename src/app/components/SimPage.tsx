@@ -27,7 +27,7 @@ return (
   <main className="min-h-screen w-full flex overflow-hidden bg-[#f0f6ff] text-black">
 
     {/* 📚 Vertical Game Selector Sidebar */}
-    <aside className="w-24 sm:w-28 md:w-36 lg:w-48 h-screen sticky top-0 overflow-y-auto border-r border-gray-200 bg-white py-6 px-3 shadow-md z-10">
+    <aside className="w-24 sm:w-28 md:w-36 lg:w-35 h-screen sticky top-0 overflow-y-auto border-r border-gray-200 bg-white py-6 px-3 shadow-md z-10">
       <GameSelector />
     </aside>
 
@@ -45,6 +45,7 @@ return (
             rates={sim.banner.rates}
             pity={sim.banner.pity}
             softPity={sim.banner.softPity}
+            history={sim.history}
           />
 
           <BannerCurrencySelect
@@ -131,9 +132,6 @@ return (
             />
           </div>
         </section>
-
-        {/* 📜 Pull History */}
-        <PullHistory history={sim.history} />
       </div>
     </div>
   </main>

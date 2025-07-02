@@ -11,7 +11,13 @@ interface Props {
   gameKey: string;
 }
 
-export default function InfoModal({ bannerType, rates, pity, softPity, gameKey }: Props) {
+export default function InfoModal({
+  bannerType,
+  rates,
+  pity,
+  softPity,
+  gameKey,
+}: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const getBannerExplanation = () => {
@@ -30,13 +36,12 @@ export default function InfoModal({ bannerType, rates, pity, softPity, gameKey }
       lines.push(`🔼 Max 5★ chance during soft pity: ${(softPity.maxRate * 100).toFixed(1)}%`);
     }
 
-    // Shared 50/50 or 75/25 system
+    // Banner-specific rules
     if (bannerType === 'standard') {
       lines.push(`⭐️ No promotional 5★ — full pool only`);
     } else if (bannerType === 'limited') {
-  lines.push(`⭐️ 50% chance to get featured 5★. If you lose, the next is guaranteed.`);
-}
-else if (bannerType === 'weapon') {
+      lines.push(`⭐️ 50% chance to get featured 5★. If you lose, the next is guaranteed.`);
+    } else if (bannerType === 'weapon') {
       if (isGenshin) {
         lines.push(`⭐️ 50% chance to get featured weapon.`);
         lines.push(`🎯 Guaranteed after 2 fails (Epitomized Path).`);
@@ -51,7 +56,11 @@ else if (bannerType === 'weapon') {
       lines.push(`🎯 Guaranteed designated item after 1 failed 5★.`);
     }
 
-    return lines.map((line, i) => <p key={i} className="mb-1">{line}</p>);
+    return lines.map((line, i) => (
+      <p key={i} className="mb-1">
+        {line}
+      </p>
+    ));
   };
 
   return (
@@ -68,6 +77,7 @@ else if (bannerType === 'weapon') {
           <Dialog.Panel className="bg-white p-6 rounded max-w-md w-full z-50">
             <Dialog.Title className="text-lg font-bold mb-3">🎲 Banner Mechanics</Dialog.Title>
             {getBannerExplanation()}
+
             <button
               onClick={() => setIsOpen(false)}
               className="mt-4 px-4 py-1 bg-blue-500 text-white rounded"
