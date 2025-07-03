@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { gachaRates, GameKey } from '@/lib/gachaData';
 import { useExchangeRate } from '@/lib/useExchangeRate';
+import { getOrCreateUserId } from './getOrCreateUserId';
 
 type Rarity = '5-Star' | '4-Star' | '3-Star';
 interface Pull { name: string; rarity: Rarity }
@@ -222,23 +223,48 @@ export function useGachaSimulator(gameKey: GameKey) {
     setSelectedCharacters([]); setSelectedWeapons([]);
   };
 
-  const handleExport = () => {
-    const data = {
-      pulls: history,
+  const handleExport = async () => {
+  const session = {
+    userId: getOrCreateUserId(),
+    game: game.name,
+    banner: banner.name,
+    bannerType: banner.type,
+    designatedItem,
+    pulls: history,
+    stats: {
       currency,
-      spent: `${symbol}${moneyDisp}`,
+      moneyDisp,
       totalPulls,
       totalFiveStars,
       avgPullsPerFive,
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'gacha_session.json';
-    a.click();
-    URL.revokeObjectURL(url);
+      expectedFiveStars,
+      luckMessage,
+    },
+    pathPoints,
+    createdAt: new Date().toISOString(),
   };
+
+  try {
+    await fetch('/api/saveSession', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(session),
+    });
+    console.log('✅ Session saved to MongoDB');
+  } catch (err) {
+    console.error('❌ Failed to save session', err);
+  }
+
+  const blob = new Blob([JSON.stringify(session, null, 2)], {
+    type: 'application/json',
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'gacha_session.json';
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
   const allCharacters = banner.type === 'chronicle' ? banner.pool['5-Star-Meta'].characters : [];
   const allWeapons = banner.type === 'chronicle' ? banner.pool['5-Star-Meta'].weapons : [];
