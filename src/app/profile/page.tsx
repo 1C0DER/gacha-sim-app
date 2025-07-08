@@ -50,6 +50,29 @@ export default function ProfilePage() {
       });
   }, []);
 
+  const handleDeleteSession = async (sessionId: string) => {
+    const confirmed = confirm('Are you sure you want to delete this session?');
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch(`/api/deleteSession?id=${sessionId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(`Failed to delete session: ${err.error}`);
+        return;
+      }
+
+      setSessions(prev => prev.filter(s => s._id !== sessionId));
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('Something went wrong deleting this session.');
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 text-black overflow-y-auto">
       <div className="max-w-4xl mx-auto px-4 py-6">
@@ -87,6 +110,7 @@ export default function ProfilePage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           session={selectedSession}
+          onDelete={selectedSession ? () => handleDeleteSession(selectedSession._id) : undefined}
         />
       </div>
     </main>

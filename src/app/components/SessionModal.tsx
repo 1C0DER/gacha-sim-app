@@ -31,12 +31,12 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   session: Session | null;
+  onDelete?: () => void; // ✅ new prop
 }
 
-export default function SessionModal({ isOpen, onClose, session }: Props) {
+export default function SessionModal({ isOpen, onClose, session, onDelete }: Props) {
   if (!session) return null;
 
-  // Convert game name back into GameKey for proper collection prefix
   const gameKey: GameKey =
     session.game === 'Genshin Impact'
       ? 'Genshin'
@@ -93,13 +93,24 @@ export default function SessionModal({ isOpen, onClose, session }: Props) {
 
           <hr className="my-4" />
 
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded w-full transition"
-          >
-            Close
-          </button>
+          {/* Buttons */}
+          <div className="mt-4 flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition"
+            >
+              Close
+            </button>
+
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                className="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded transition"
+              >
+                🗑️ Delete Session
+              </button>
+            )}
+          </div>
         </Dialog.Panel>
       </div>
     </Dialog>
