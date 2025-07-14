@@ -2,7 +2,7 @@
 
 import { GameKey } from '@/lib/gachaData';
 import { useGachaSimulator } from '@/lib/useGachaSimulator';
-
+import CustomPullInput from './CustomPullInput';
 import GameSelector from './GameSelector';
 import StatsDashboard from './StatsDashboard';
 import SummaryBox from './SummaryBox';
@@ -79,12 +79,21 @@ return (
             />
           )}
 
-          {/* Pull buttons + Session overview side by side */}
+          {/* Pull buttons + Session */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <PullButtons
-              onOnePull={sim.onOnePull}
-              onTenPull={sim.onTenPull}
-            />
+            <div className="flex gap-9">
+              <PullButtons
+                onOnePull={sim.onOnePull}
+                onTenPull={sim.onTenPull}
+              />
+              <CustomPullInput
+                onCustomPull={(count) => {
+                  for (let i = 0; i < count; i++) {
+                    sim.onOnePull();
+                  }
+                }}
+              />
+            </div>
 
             <div className="w-full md:max-w-xs">
               <SessionOverview
