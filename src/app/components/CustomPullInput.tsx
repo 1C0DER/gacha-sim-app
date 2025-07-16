@@ -11,8 +11,8 @@ export default function CustomPullInput({ onCustomPull }: Props) {
 
   const handlePull = () => {
     const value = parseInt(count, 10);
-    if (isNaN(value) || value < 1 || value > 500) {
-      alert('Please enter a number between 1 and 500.');
+    if (isNaN(value) || value < 1 || value > 10000) {
+      alert('Please enter a number between 1 and 10000.');
       return;
     }
     onCustomPull(value);
@@ -27,7 +27,7 @@ export default function CustomPullInput({ onCustomPull }: Props) {
         value={count}
         onChange={(e) => setCount(e.target.value)}
         min={1}
-        max={500}
+        max={10000}
         className="border border-gray-300 rounded px-3 py-2 text-sm w-32"
       />
       <button

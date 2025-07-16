@@ -24,7 +24,8 @@ export default function SimPage({ gameKey }: Props) {
   const collection = useCollectionTracker(sim.history, gameKey);
 
 return (
-  <main className="min-h-screen w-full flex overflow-hidden bg-[#f0f6ff] text-black">
+  <main className="min-h-screen w-full flex overflow-hidden text-black bg-cover bg-center"
+  style={{ backgroundImage: "url('/back.png')" }}>
 
     {/* 📚 Vertical Game Selector Sidebar */}
     <aside className="w-24 sm:w-28 md:w-36 lg:w-35 h-screen sticky top-0 overflow-y-auto border-r border-gray-200 bg-white py-6 px-3 shadow-md z-10">
