@@ -80,6 +80,7 @@ export function useGachaSimulator(gameKey: GameKey) {
 
   const isHonkaiWeapon = bannerType === 'weapon' && gameKey === 'Honkai';
   const isGenshinWeapon = bannerType === 'weapon' && gameKey === 'Genshin';
+  const isZZZWeapon = bannerType === 'weapon' && gameKey === 'ZZZ';
   const isChronicle = bannerType === 'chronicle';
 
   const usingDesignated = isChronicle || isGenshinWeapon;
@@ -91,7 +92,7 @@ export function useGachaSimulator(gameKey: GameKey) {
   if (isGuaranteed) return [designatedItem!, false, 0];
 
   const featHit = lost5050 || Math.random() < (
-    isHonkaiWeapon ? 0.75 : 0.5
+    isHonkaiWeapon || isZZZWeapon ? 0.75 : 0.5
   );
 
   let pool: readonly string[];

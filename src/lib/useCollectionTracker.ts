@@ -18,6 +18,7 @@ export interface CollectionEntry {
 const gamePrefixes: Record<GameKey, string> = {
   Genshin: 'C',
   Honkai: 'E',
+  ZZZ: 'M',
   Custom: '?',
 };
 
