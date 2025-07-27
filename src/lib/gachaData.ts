@@ -54,7 +54,7 @@ export const gachaRates = {
         currencyPerPull: 160,
         rates: { '5-Star': 0.007, '4-Star': 0.060, '3-Star': 0.933 },
         pity: { '5-Star': 80, '4-Star': 10 },
-        softPity: { enabled: true, start: 65, maxRate: 0.35 },
+        softPity: { enabled: true, start: 65, maxRate: 0.2 },
         featured: {
           '5-Star': ['Azurelight', 'Calamity Queller'],
           '4-Star': ['Xiphos’ Moonlight', 'Makhaira Aquamarine', 'Wandering Evenstar', 'Favonius Lance', 'Sacrificial Bow'],
@@ -225,70 +225,70 @@ export const gachaRates = {
     },
   },
 },
-ZZZ: {
-  name: 'Zenless Zone Zero',
-  icon: '/icons/zzz.jpg',
-  banners: {
-    Limited: {
-      name: 'Whispered Tales',
-      type: 'limited',
-      costPerPullGBP: 2.30,
-      currencyPerPull: 160,
-      rates: {
-        '5-Star': 0.006,
-        '4-Star': 0.094,
-        '3-Star': 0.9,
+  ZZZ: {
+    name: 'Zenless Zone Zero',
+    icon: '/icons/zzz.jpg',
+    banners: {
+      Limited: {
+        name: 'Whispered Tales',
+        type: 'limited',
+        costPerPullGBP: 2.30,
+        currencyPerPull: 160,
+        rates: {
+          '5-Star': 0.006,
+          '4-Star': 0.094,
+          '3-Star': 0.9,
+        },
+        pity: {
+          '5-Star': 90,
+          '4-Star': 10,
+        },
+        softPity: {
+          enabled: true,
+          start: 75,
+          maxRate: 0.324,
+        },
+        featured: {
+          '5-Star': ['Ukinami Yuzuha'],
+          '4-Star': ['Piper Wheel', 'Billy Kid'],
+        },
+        pool: {
+          '5-Star': ['Yuzuha', 'Alexandrina Sebastiane', 'Grace Howard', 'Koleda Belobog', 'Nekomiya Mana', 'Soldier 11', 'Von Lycaon'],
+          '4-Star': ['Anby Demara', 'Anton Ivanov', 'Ben Bigger', 'Corin Wickes', 'Luciana de Montefio', 'Nicole Demara', 'Pan Yinhu', 'Pulchra Fellini', 'Seth Lowell', 'Soukaku', 'Bashful Demon', 'Big Cylinder', 'Box Cutter', 'Bunny Band', 'Demara Battery Mark II', 'Drill Rig - Red Axis', 'Housekeeper', 'Kaboom the Cannon', 'Original Transmorpher', 'Peacekeeper - Specialized', 'Precious Fossilized Core', 'Puzzle Sphere', 'Rainforest Gourmet', 'Roaring Ride', 'Slice of Time', 'Starlight Engine Replica', 'Starlight Engine', 'Steam Oven', 'Street Superstar', 'The Vault', 'Tremor Trigram Vessel', 'Weeping Gemini'],
+          '3-Star': ['Base', 'Inflection', 'Decrescent', 'Noviluna', 'Pleniluna', 'Alpha', 'Bravo', 'Charlie', 'Mark I', 'Mark II', 'Mark III', 'Arrow', 'Hatchet', 'Revolver', 'Cobalt'],
+        },
       },
-      pity: {
-        '5-Star': 90,
-        '4-Star': 10,
-      },
-      softPity: {
-        enabled: true,
-        start: 75,
-        maxRate: 0.324,
-      },
-      featured: {
-        '5-Star': ['Ukinami Yuzuha'],
-        '4-Star': ['Piper Wheel', 'Billy Kid'],
-      },
-      pool: {
-        '5-Star': ['Yuzuha', 'Alexandrina Sebastiane', 'Grace Howard', 'Koleda Belobog', 'Nekomiya Mana', 'Soldier 11', 'Von Lycaon'],
-        '4-Star': ['Anby Demara', 'Anton Ivanov', 'Ben Bigger', 'Corin Wickes', 'Luciana de Montefio', 'Nicole Demara', 'Pan Yinhu', 'Pulchra Fellini', 'Seth Lowell', 'Soukaku', 'Bashful Demon', 'Big Cylinder', 'Box Cutter', 'Bunny Band', 'Demara Battery Mark II', 'Drill Rig - Red Axis', 'Housekeeper', 'Kaboom the Cannon', 'Original Transmorpher', 'Peacekeeper - Specialized', 'Precious Fossilized Core', 'Puzzle Sphere', 'Rainforest Gourmet', 'Roaring Ride', 'Slice of Time', 'Starlight Engine Replica', 'Starlight Engine', 'Steam Oven', 'Street Superstar', 'The Vault', 'Tremor Trigram Vessel', 'Weeping Gemini'],
-        '3-Star': ['Base', 'Inflection', 'Decrescent', 'Noviluna', 'Pleniluna', 'Alpha', 'Bravo', 'Charlie', 'Mark I', 'Mark II', 'Mark III', 'Arrow', 'Hatchet', 'Revolver', 'Cobalt'],
-      },
-    },
-    Weapon: {
-      name: 'Dissonant Sonata',
-      type: 'weapon',
-      costPerPullGBP: 2.30,
-      currencyPerPull: 160,
-      rates: {
-        '5-Star': 0.006,
-        '4-Star': 0.094,
-        '3-Star': 0.9,
-      },
-      pity: {
-        '5-Star': 80,
-        '4-Star': 10,
-      },
-      softPity: {
-        enabled: true,
-        start: 65,
-        maxRate: 0.35,
-      },
-      featured: {
-        '5-Star': ['Metanuki-morphosis'],
-        '4-Star': ['Roaring Tide', 'Starlight Engine Replica'],
-      },
-      pool: {
-        '5-Star': ['Fusion Compiler', 'Hellfire Gears', 'Steel Cushion', 'The Brimstone', 'The Restrained', 'Weeping Cradle'],
-        '4-Star': ['Anby Demara', 'Anton Ivanov', 'Ben Bigger', 'Corin Wickes', 'Luciana de Montefio', 'Nicole Demara', 'Pan Yinhu', 'Pulchra Fellini', 'Seth Lowell', 'Soukaku', 'Bashful Demon', 'Big Cylinder', 'Box Cutter', 'Bunny Band', 'Demara Battery Mark II', 'Drill Rig - Red Axis', 'Housekeeper', 'Kaboom the Cannon', 'Original Transmorpher', 'Peacekeeper - Specialized', 'Precious Fossilized Core', 'Puzzle Sphere', 'Rainforest Gourmet', 'Roaring Ride', 'Slice of Time', 'Starlight Engine Replica', 'Starlight Engine', 'Steam Oven', 'Street Superstar', 'The Vault', 'Tremor Trigram Vessel', 'Weeping Gemini'],
-        '3-Star': ['Base', 'Inflection', 'Decrescent', 'Noviluna', 'Pleniluna', 'Alpha', 'Bravo', 'Charlie', 'Mark I', 'Mark II', 'Mark III', 'Arrow', 'Hatchet', 'Revolver', 'Cobalt'],
+      Weapon: {
+        name: 'Dissonant Sonata',
+        type: 'weapon',
+        costPerPullGBP: 2.30,
+        currencyPerPull: 160,
+        rates: {
+          '5-Star': 0.01, 
+          '4-Star': 0.15,   
+          '3-Star': 0.84   
+        },
+        pity: {
+          '5-Star': 80,    
+          '4-Star': 10,   
+        },
+        softPity: {
+          enabled: true,
+          start: 65,       
+          maxRate: 0.35     
+        },
+        featured: {
+          '5-Star': ['Metanuki-morphosis'],
+          '4-Star': ['Roaring Tide', 'Starlight Engine Replica'],
+        },
+        pool: {
+          '5-Star': ['Fusion Compiler', 'Hellfire Gears', 'Steel Cushion', 'The Brimstone', 'The Restrained', 'Weeping Cradle'],
+          '4-Star': ['Anby Demara', 'Anton Ivanov', 'Ben Bigger', 'Corin Wickes', 'Luciana de Montefio', 'Nicole Demara', 'Pan Yinhu', 'Pulchra Fellini', 'Seth Lowell', 'Soukaku', 'Bashful Demon', 'Big Cylinder', 'Box Cutter', 'Bunny Band', 'Demara Battery Mark II', 'Drill Rig - Red Axis', 'Housekeeper', 'Kaboom the Cannon', 'Original Transmorpher', 'Peacekeeper - Specialized', 'Precious Fossilized Core', 'Puzzle Sphere', 'Rainforest Gourmet', 'Roaring Ride', 'Slice of Time', 'Starlight Engine Replica', 'Starlight Engine', 'Steam Oven', 'Street Superstar', 'The Vault', 'Tremor Trigram Vessel', 'Weeping Gemini'],
+          '3-Star': ['Base', 'Inflection', 'Decrescent', 'Noviluna', 'Pleniluna', 'Alpha', 'Bravo', 'Charlie', 'Mark I', 'Mark II', 'Mark III', 'Arrow', 'Hatchet', 'Revolver', 'Cobalt'],
+        },
       },
     },
   },
-},
   Custom: {
     name: 'Custom Game',
   icon: '/icons/custom.jpg',
