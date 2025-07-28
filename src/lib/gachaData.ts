@@ -287,6 +287,54 @@ export const gachaRates = {
           '3-Star': ['Base', 'Inflection', 'Decrescent', 'Noviluna', 'Pleniluna', 'Alpha', 'Bravo', 'Charlie', 'Mark I', 'Mark II', 'Mark III', 'Arrow', 'Hatchet', 'Revolver', 'Cobalt'],
         },
       },
+      Bangboo: {
+        name: 'An Outstanding Partner',
+        type: 'guaranteed',
+        costPerPullGBP: 2.30,
+        currencyPerPull: 160,
+        rates: {
+          '5-Star': 0.01,
+          '4-Star': 0.15,
+          '3-Star': 0.84,
+        },
+        pity: {
+          '5-Star': 80,
+          '4-Star': 10,
+        },
+        softPity: {
+          enabled: false,
+          start: 0,
+          maxRate: 0,
+        },
+        featured: {
+          '5-Star': [], 
+          '4-Star': ['Rocketboo'], 
+        },
+        pool: {
+          '5-Star': [
+            'Agent Gulliver', 'Amillion', 'Bangvolver', 'Belion', 'Butler',
+            'Officer Cui', 'Plugboo', 'Red Moccus', 'Resonaboo', 'Robin',
+            'Rocketboo', 'Safety', 'Sharkboo', 'Snap'
+          ],
+          '4-Star': [
+            'Avocaboo', 'Baddieboo', 'Bagboo', 'Boollseye', 'Cryboo',
+            'Devilboo', 'Electroboo', 'Exploreboo', 'Magnetiboo', 'Paperboo',
+            'Penguinboo', 'Sumoboo'
+          ],
+          '3-Star': [
+            'Base', 'Inflection', 'Decrescent', 'Noviluna', 'Pleniluna',
+            'Alpha', 'Bravo', 'Charlie', 'Mark I', 'Mark II', 'Mark III',
+            'Arrow', 'Hatchet', 'Revolver', 'Cobalt'
+          ],
+        },
+        '5-Star-Meta': {
+          bangboos: [
+            'Agent Gulliver', 'Amillion', 'Bangvolver', 'Belion', 'Butler',
+            'Officer Cui', 'Plugboo', 'Red Moccus', 'Resonaboo', 'Robin',
+            'Rocketboo', 'Safety', 'Sharkboo', 'Snap'
+          ],
+        },
+      },
     },
   },
   Custom: {

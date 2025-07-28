@@ -62,61 +62,60 @@ export function useGachaSimulator(gameKey: GameKey) {
   };
 
   const getFeatured5Stars = () => {
-  return banner.type === 'chronicle'
-    ? [...selectedCharacters, ...selectedWeapons]
-    : banner.featured?.['5-Star'] || [];
-};
-
+    if (banner.type === 'chronicle') return [...selectedCharacters, ...selectedWeapons];
+    if (banner.type === 'guaranteed' && designatedItem) return [designatedItem];
+    return banner.featured?.['5-Star'] || [];
+  };
 
   const handlePull = (
-  rarity: Rarity,
-  pity: number,
-  lost5050: boolean,
-  localPath: number
-): [string, boolean, number] => {
-  const featured = getFeatured5Stars();
-  const fallback = banner.pool['5-Star'];
-  const bannerType = banner.type;
+    rarity: Rarity,
+    pity: number,
+    lost5050: boolean,
+    localPath: number
+  ): [string, boolean, number] => {
+    const featured = getFeatured5Stars();
+    const fallback = banner.pool['5-Star'];
+    const bannerType = banner.type;
 
-  const isHonkaiWeapon = bannerType === 'weapon' && gameKey === 'Honkai';
-  const isGenshinWeapon = bannerType === 'weapon' && gameKey === 'Genshin';
-  const isZZZWeapon = bannerType === 'weapon' && gameKey === 'ZZZ';
-  const isChronicle = bannerType === 'chronicle';
+    const isHonkaiWeapon = bannerType === 'weapon' && gameKey === 'Honkai';
+    const isGenshinWeapon = bannerType === 'weapon' && gameKey === 'Genshin';
+    const isZZZWeapon = bannerType === 'weapon' && gameKey === 'ZZZ';
+    const isChronicle = bannerType === 'chronicle';
+    const isGuaranteedBanner = bannerType === 'guaranteed';
 
-  const usingDesignated = isChronicle || isGenshinWeapon;
-
-  const isGuaranteed = usingDesignated && designatedItem && (
-    (isChronicle && localPath >= 1) ||
-    (isGenshinWeapon && localPath >= 2)
-  );
-  if (isGuaranteed) return [designatedItem!, false, 0];
-
-  const featHit = lost5050 || Math.random() < (
-    isHonkaiWeapon || isZZZWeapon ? 0.75 : 0.5
-  );
-
-  let pool: readonly string[];
-
-  if (isChronicle) {
-    pool = featured.length ? featured : fallback;
-  } else {
-    pool = featHit && featured.length ? featured : fallback;
-  }
-
-  const chosen = rand(pool);
-  let newPath = localPath;
-
-  if (usingDesignated && designatedItem) {
-    if (chosen !== designatedItem) {
-      newPath += 1;
-    } else {
-      newPath = 0;
+    let isGuaranteed = false;
+    if (designatedItem) {
+      if (isChronicle && localPath >= 1) isGuaranteed = true;
+      if (isGenshinWeapon && localPath >= 2) isGuaranteed = true;
+      if (isGuaranteedBanner) isGuaranteed = true;
     }
-  }
 
-  return [chosen, !featHit, newPath];
-};
+    if (isGuaranteed) return [designatedItem!, false, 0];
 
+    const featHit = lost5050 || Math.random() < (
+      isHonkaiWeapon || isZZZWeapon ? 0.75 : 0.5
+    );
+
+    let pool: readonly string[];
+
+    if (isGuaranteedBanner) {
+      pool = [designatedItem || rand(fallback)];
+    } else if (isChronicle) {
+      pool = featured.length ? featured : fallback;
+    } else {
+      pool = featHit && featured.length ? featured : fallback;
+    }
+
+    const chosen = rand(pool);
+    let newPath = localPath;
+
+    if ((isChronicle || isGenshinWeapon) && designatedItem) {
+      if (chosen !== designatedItem) newPath += 1;
+      else newPath = 0;
+    }
+
+    return [chosen, !featHit, newPath];
+  };
 
   const pullOnce = (): Pull => {
     const g5 = pity5 + 1 >= banner.pity['5-Star'];
@@ -225,50 +224,49 @@ export function useGachaSimulator(gameKey: GameKey) {
   };
 
   const handleExport = async () => {
-  const session = {
-    userId: getOrCreateUserId(),
-    game: game.name,
-    banner: banner.name,
-    bannerType: banner.type,
-    designatedItem,
-    pulls: history,
-    stats: {
-      currency,
-      moneyDisp,
-      totalPulls,
-      totalFiveStars,
-      avgPullsPerFive,
-      expectedFiveStars,
-      luckMessage,
-    },
-    pathPoints,
-    createdAt: new Date().toISOString(),
+    const session = {
+      userId: getOrCreateUserId(),
+      game: game.name,
+      banner: banner.name,
+      bannerType: banner.type,
+      designatedItem,
+      pulls: history,
+      stats: {
+        currency,
+        moneyDisp,
+        totalPulls,
+        totalFiveStars,
+        avgPullsPerFive,
+        expectedFiveStars,
+        luckMessage,
+      },
+      pathPoints,
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      await fetch('/api/saveSession', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(session),
+      });
+      console.log('✅ Session saved to MongoDB');
+    } catch (err) {
+      console.error('❌ Failed to save session', err);
+    }
+
+    const blob = new Blob([JSON.stringify(session, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gacha_session.json';
+    a.click();
+    URL.revokeObjectURL(url);
   };
-
-  try {
-    await fetch('/api/saveSession', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(session),
-    });
-    console.log('✅ Session saved to MongoDB');
-  } catch (err) {
-    console.error('❌ Failed to save session', err);
-  }
-
-  const blob = new Blob([JSON.stringify(session, null, 2)], {
-    type: 'application/json',
-  });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'gacha_session.json';
-  a.click();
-  URL.revokeObjectURL(url);
-};
 
   const allCharacters = banner.type === 'chronicle' ? banner.pool['5-Star-Meta'].characters : [];
   const allWeapons = banner.type === 'chronicle' ? banner.pool['5-Star-Meta'].weapons : [];
+  const allBangboos = banner.type === 'guaranteed' ? banner.pool['5-Star'] : [];
 
   const handleAdd = (item: string, type: 'char' | 'weapon') => {
     if (type === 'char' && !selectedCharacters.includes(item) && selectedCharacters.length < 7) {
@@ -297,6 +295,7 @@ export function useGachaSimulator(gameKey: GameKey) {
     charToAdd, setCharToAdd, weaponToAdd, setWeaponToAdd,
     designatedItem, setDesignatedItem,
     selectedCharacters, selectedWeapons,
+    allCharacters, allWeapons, allBangboos,
     handleAdd, handleRemove,
     onOnePull: onePull,
     onTenPull: tenPull,
@@ -304,8 +303,6 @@ export function useGachaSimulator(gameKey: GameKey) {
     onChangeBanner: changeBanner,
     onChangeCurrency: setCurrency,
     supportedCurrencies, currencySymbols,
-    allCharacters,
-    allWeapons,
     getFeatured5Stars,
   };
 }

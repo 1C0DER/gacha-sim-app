@@ -60,13 +60,18 @@ return (
             onChangeCurrency={sim.onChangeCurrency}
           />
 
-          {(sim.banner.type === 'chronicle' || (sim.banner.type === 'weapon' && gameKey === 'Genshin')) && (
+          {(
+            sim.banner.type === 'chronicle' || 
+            (sim.banner.type === 'weapon' && gameKey === 'Genshin') ||
+            sim.banner.type === 'guaranteed' // ✅ add this
+          ) && (
             <CustomizeFeaturedItems
               bannerType={sim.banner.type}
               selectedCharacters={sim.selectedCharacters}
               selectedWeapons={sim.selectedWeapons}
               allCharacters={sim.allCharacters}
               allWeapons={sim.allWeapons}
+              allBangboos={sim.banner.type === 'guaranteed' ? sim.banner.pool['5-Star'] : []} // ✅ for Bangboo
               designatedItem={sim.designatedItem}
               pathPoints={sim.pathPoints}
               charToAdd={sim.charToAdd}

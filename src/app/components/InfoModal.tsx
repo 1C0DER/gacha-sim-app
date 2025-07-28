@@ -27,7 +27,7 @@ export default function InfoModal({
       case 'Honkai':
         return { item: 'Light Cone', featured5: 'character', fourStar: 'character or Light Cone' };
       case 'ZZZ':
-        return { item: 'W-Engine', featured5: 'character', fourStar: 'character or W-Engine' };
+        return { item: bannerType === 'guaranteed' ? 'Bangboo' : 'W-Engine', featured5: 'Bangboo', fourStar: 'A-Rank Bangboo' };
       default:
         return { item: 'item', featured5: 'item', fourStar: '4★ item' };
     }
@@ -63,19 +63,21 @@ export default function InfoModal({
       lines.push(`⭐️ 50% chance to get featured ${item}`);
       lines.push(`🎯 Guaranteed after 2 fails (Epitomized Path)`);
       lines.push(`🛠 Requires selecting a designated ${item}`);
-    } else if (gameKey === 'Honkai') {
+    } else if (gameKey === 'Honkai' || gameKey === 'ZZZ') {
       lines.push(`⭐️ 75% chance to get featured ${item}`);
       lines.push(`🎯 Guaranteed after 1 fail`);
       lines.push(`🚫 No designated ${item} selection system`);
-    } else if (gameKey === 'ZZZ') {
-      lines.push(`⭐️ 75% chance to get featured ${item}`);
-      lines.push(`🎯 Guaranteed after 1 fail`);
     }
   }
 
   if (bannerType === 'chronicle') {
     lines.push(`⭐️ 50% chance to get featured item`);
     lines.push(`🎯 Guaranteed designated item after 1 failed 5★`);
+  }
+
+  if (bannerType === 'guaranteed') {
+    lines.push(`⭐️ Guaranteed system: You select an S-Rank ${item} before pulling.`);
+    lines.push(`🎯 Any 5★ you pull is guaranteed to be the selected ${item}.`);
   }
 
   return (
