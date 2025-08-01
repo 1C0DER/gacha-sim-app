@@ -25,21 +25,23 @@ export default function SimPage({ gameKey }: Props) {
   const theme = getTheme(gameKey);
 
   return (
-    <main
-      className="min-h-screen w-full flex overflow-hidden relative bg-cover bg-center"
-      style={{
-        backgroundImage: `url(${theme.background})`,
-        color: theme.textColor,
-      }}
-    >
-    <div className="absolute inset-0" style={{ backgroundColor: theme.overlay }} />
+    <main className="relative min-h-screen w-full flex overflow-hidden">
+      {/* Slightly blurred background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center blur-xs"
+        style={{ backgroundImage: `url(${theme.background})` }}
+      ></div>
+
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 bg-black/20"></div>
+
       {/* Sidebar */}
-      <aside className="w-24 sm:w-28 md:w-36 lg:w-35 h-screen sticky top-0 overflow-y-auto border-r border-gray-200 bg-white py-6 px-3 shadow-md z-10">
+      <aside className="relative z-10 w-24 sm:w-28 md:w-36 lg:w-35 h-screen sticky top-0 overflow-y-auto border-r border-gray-200 bg-white py-6 px-3 shadow-md">
         <GameSelector />
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto h-screen px-4 py-8 relative z-10">
+      <div className="relative z-10 flex-1 overflow-y-auto h-screen px-4 py-8">
         <div className="max-w-[90%] mx-auto space-y-4">
           <section className="space-y-5">
             <HeaderSection
@@ -89,7 +91,7 @@ export default function SimPage({ gameKey }: Props) {
                 handleRemove={sim.handleRemove}
                 handleDesignatedSelect={sim.setDesignatedItem}
                 featured5Stars={sim.getFeatured5Stars()}
-                gameKey={gameKey} 
+                gameKey={gameKey}
               />
             )}
 
@@ -104,6 +106,7 @@ export default function SimPage({ gameKey }: Props) {
                   onCustomPull={(count) => {
                     for (let i = 0; i < count; i++) sim.onOnePull();
                   }}
+                  gameKey={gameKey}
                 />
               </div>
               <div className="w-full md:max-w-xs">
@@ -116,21 +119,22 @@ export default function SimPage({ gameKey }: Props) {
                   pityMax4={sim.banner.pity['4-Star']}
                   onClear={() => sim.onChangeBanner(sim.selectedBanner)}
                   onExport={sim.onExport}
-                  gameKey={gameKey} 
+                  gameKey={gameKey}
                 />
               </div>
             </div>
-          <SummaryBox
-            totalPulls={sim.totalPulls}
-            totalFiveStars={sim.totalFiveStars}
-            avgPullsPerFive={sim.avgPullsPerFive}
-            lastFiveStarAt={sim.lastFiveStarAt}
-            expectedFiveStars={sim.expectedFiveStars}
-            luckMessage={sim.luckMessage}
-            currency={sim.currency}
-            moneyDisp={sim.moneyDisp}
-            gameKey={gameKey}   
-          />
+
+            <SummaryBox
+              totalPulls={sim.totalPulls}
+              totalFiveStars={sim.totalFiveStars}
+              avgPullsPerFive={sim.avgPullsPerFive}
+              lastFiveStarAt={sim.lastFiveStarAt}
+              expectedFiveStars={sim.expectedFiveStars}
+              luckMessage={sim.luckMessage}
+              currency={sim.currency}
+              moneyDisp={sim.moneyDisp}
+              gameKey={gameKey}
+            />
           </section>
 
           <section>
