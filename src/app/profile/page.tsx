@@ -74,9 +74,19 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 text-black overflow-y-auto">
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-4">👤 Your Profile</h1>
+    <main
+      className="relative min-h-screen text-black overflow-y-auto"
+      style={{
+        backgroundImage: "url('/back1.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Blur overlay */}
+      <div className="absolute inset-0 bg-white/20 backdrop-blur-md z-0"></div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold mb-4 text-purple-700">👤 Your Profile</h1>
         <p className="text-sm mb-4 text-gray-600">
           Anonymous ID:{' '}
           <code className="text-xs bg-gray-100 px-2 py-1 rounded break-all">{userId}</code>
@@ -88,12 +98,12 @@ export default function ProfilePage() {
           <p className="text-gray-500">No saved sessions yet. Go pull something first!</p>
         ) : (
           <>
-            <h2 className="text-lg font-semibold mb-3">📚 Your Sessions</h2>
+            <h2 className="text-lg font-semibold mb-3 text-purple-600">📚 Your Sessions</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {sessions.map((s, index) => (
                 <button
                   key={s._id}
-                  className="bg-white border border-gray-300 hover:border-blue-500 shadow-sm rounded-xl p-6 flex items-center justify-center text-xl font-bold transition text-blue-700"
+                  className="bg-white/70 border border-gray-300 hover:border-purple-400 shadow-md rounded-xl p-6 flex items-center justify-center text-xl font-bold transition text-purple-700 backdrop-blur-sm"
                   onClick={() => {
                     setSelectedSession(s);
                     setIsModalOpen(true);
