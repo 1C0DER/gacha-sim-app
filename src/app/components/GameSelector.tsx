@@ -10,7 +10,8 @@ export default function GameSelector() {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto flex flex-col justify-between h-full">
+      {/* Games */}
       <div className="flex flex-col gap-4">
         {Object.entries(gachaRates).map(([key, data]) => (
           <button
@@ -26,6 +27,22 @@ export default function GameSelector() {
             <span className="text-sm text-gray-800 text-center">{data.name}</span>
           </button>
         ))}
+      </div>
+
+      {/* Profile Circle */}
+      <div className="mt-auto flex flex-col items-center justify-center pt-6 gap-2">
+        <button
+          onClick={() => router.push('/profile')}
+          className="w-12 h-12 rounded-full overflow-hidden shadow-md border-2 transition hover:border-blue-600"
+          title="Profile"
+        >
+          <img
+            src="/profile.png"
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
+        </button>
+        <span className="text-sm text-gray-700">Profile</span>
       </div>
     </div>
   );
