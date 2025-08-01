@@ -1,8 +1,18 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, 
-        LinearScale, PointElement, LineElement, Filler } from 'chart.js';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Filler
+} from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import type { Chart as ChartInstance } from 'chart.js';
 import { GameKey } from '@/lib/gachaData';
@@ -175,7 +185,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
 
       {/* Pity */}
       {pityGaps.length > 0 && (
-        <div className={`${theme.panelBg}  p-3 rounded-2xl shadow-lg border border-white/30`}>
+        <div className={`${theme.panelBg} p-3 rounded-2xl shadow-lg border border-white/30`}>
           <div className="flex justify-between items-center mb-2">
             <h3 className={`font-semibold text-sm ${theme.headingText}`}>Pity Histogram (Pulls Between 5★s)</h3>
             <div className="space-x-2 text-xs">
@@ -233,7 +243,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                       return rate * 100;
                     }),
                     borderColor: theme.chartColors.probLine,
-                    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                    backgroundColor: theme.chartColors.probFill,
                     fill: true,
                     tension: 0.3,
                   }]
@@ -278,7 +288,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                     label: '£ Spent',
                     data: spendingData.map(p => p.y),
                     borderColor: theme.chartColors.spendLine,
-                    backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                    backgroundColor: theme.chartColors.spendFill,
                     fill: true,
                     tension: 0.3,
                   }]
@@ -324,8 +334,8 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                       p.y === 3 ? theme.chartColors.pie[0] : p.y === 2 ? theme.chartColors.pie[1] : '#e5e7eb'
                     ),
                     pointBorderColor: '#111',
-                    borderColor: '#6b7280',
-                    backgroundColor: '#cbd5e166',
+                    borderColor: theme.chartColors.timelineBorder,
+                    backgroundColor: theme.chartColors.timelineFill,
                     fill: false,
                     tension: 0.2,
                   }]

@@ -89,6 +89,7 @@ export default function SimPage({ gameKey }: Props) {
                 handleRemove={sim.handleRemove}
                 handleDesignatedSelect={sim.setDesignatedItem}
                 featured5Stars={sim.getFeatured5Stars()}
+                gameKey={gameKey} 
               />
             )}
 
@@ -128,7 +129,7 @@ export default function SimPage({ gameKey }: Props) {
             luckMessage={sim.luckMessage}
             currency={sim.currency}
             moneyDisp={sim.moneyDisp}
-            gameKey={gameKey}   // 👈 Add this
+            gameKey={gameKey}   
           />
           </section>
 

@@ -26,20 +26,26 @@ export default function SessionOverview({
   const theme = getTheme(gameKey);
 
   return (
-    <div className={`${theme.panelBg} ${theme.borderGold} rounded-2xl shadow-lg p-5 text-sm space-y-2 border border-white/30`}>
-      <p className="text-green-700">💸 <strong>{symbol}{moneyDisp}</strong> spent</p>
-      <p className="text-green-700">
+    <div
+      className={`${theme.panelBg} ${theme.borderGold} rounded-2xl shadow-lg p-5 text-sm space-y-2`}
+    >
+      <p className={`${theme.headingText}`}>
+        💸 <strong>{symbol}{moneyDisp}</strong> spent
+      </p>
+      <p className={`${theme.headingText}`}>
         Pity: 5★ <strong>{pity5}/{pityMax5}</strong> | 4★ <strong>{pity4}/{pityMax4}</strong>
       </p>
       <div className="flex gap-3 mt-3">
         <button
           onClick={onClear}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition">
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+        >
           Clear Session
         </button>
         <button
           onClick={onExport}
-          className={`${theme.buttonActive} hover:opacity-90 px-4 py-2 rounded transition`}>
+          className={`${theme.buttonActive} hover:opacity-90 px-4 py-2 rounded transition`}
+        >
           Export Session
         </button>
       </div>
