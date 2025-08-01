@@ -4,6 +4,7 @@ import InfoModal from './InfoModal';
 import GlossaryModal from './GlossaryModal';
 import type { Pull } from '@/lib/useCollectionTracker';
 import PullHistory from './PullHistory';
+import { getTheme } from '@/lib/themeConfig';
 
 interface Props {
   gameKey: string;
@@ -24,12 +25,13 @@ export default function HeaderSection({
   rates,
   pity,
   softPity,
-  history
+  history,
 }: Props) {
+  const theme = getTheme(gameKey);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md text-center p-5 border border-gray-200">
-      <h1 className="text-3xl font-bold mb-2 text-gray-800">
+    <div className={`${theme.panelBg} ${theme.borderGold} rounded-2xl shadow-lg text-center p-5 border border-white/30`}>
+      <h1 className={`text-3xl font-bold mb-2 ${theme.headingText}`}>
         {gameName} — {bannerName}
       </h1>
       <div className="flex justify-center gap-3 mt-2">
@@ -38,8 +40,7 @@ export default function HeaderSection({
           rates={rates}
           pity={pity}
           softPity={softPity}
-          gameKey={gameKey}
-        />
+          gameKey={gameKey}/>
         <GlossaryModal />
         <PullHistory history={history} />
       </div>

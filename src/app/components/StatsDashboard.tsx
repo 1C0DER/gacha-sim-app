@@ -2,10 +2,11 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, 
-        LinearScale, PointElement, LineElement, Filler,} from 'chart.js';
+        LinearScale, PointElement, LineElement, Filler } from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import type { Chart as ChartInstance } from 'chart.js';
 import { GameKey } from '@/lib/gachaData';
+import { getTheme } from '@/lib/themeConfig';
 
 ChartJS.register(
   ArcElement,
@@ -48,9 +49,9 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
     prob: false,
   });
 
-  const toggle = (key: string) => {
-    setCollapsed(prev => ({ ...prev, [key]: !prev[key] }));
-  };
+  const theme = getTheme(gameKey);
+
+  const toggle = (key: string) => setCollapsed(prev => ({ ...prev, [key]: !prev[key] }));
 
   const downloadChart = (key: string) => {
     const chartMap = {
@@ -77,10 +78,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
     return acc;
   }, {} as Record<Rarity, number>);
 
-  const fiveStarsOnly = history
-    .map((p, i) => ({ ...p, index: i }))
-    .filter(p => p.rarity === '5-Star');
-
+  const fiveStarsOnly = history.map((p, i) => ({ ...p, index: i })).filter(p => p.rarity === '5-Star');
   const featuredList = banner.featured?.['5-Star'] || [];
   const featuredPulls = fiveStarsOnly.filter(p => featuredList.includes(p.name)).length;
   const offBannerPulls = fiveStarsOnly.length - featuredPulls;
@@ -110,19 +108,19 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
       x: i + 1,
       y: p.rarity === '5-Star' ? 3 : p.rarity === '4-Star' ? 2 : 1,
       label: p.name,
-      rarity: p.rarity
+      rarity: p.rarity,
     }));
   }, [history]);
 
   return (
     <div className="mt-6 w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Rarity */}
-      <div className="bg-white p-3 rounded-2xl shadow-md">
+      <div className={`${theme.panelBg} p-3 rounded-2xl shadow-lg border border-white/30`}>
         <div className="flex justify-between items-center mb-2">
-          <h3 className="font-semibold text-sm">Rarity Distribution (4★ & 5★)</h3>
+          <h3 className={`font-semibold text-sm ${theme.headingText}`}>Rarity Distribution (4★ & 5★)</h3>
           <div className="space-x-2 text-xs">
-            <button onClick={() => toggle('rarity')} className="text-blue-600">Toggle</button>
-            <button onClick={() => downloadChart('rarity')} className="text-green-600">Export</button>
+            <button onClick={() => toggle('rarity')} className={theme.buttonInactive}>Toggle</button>
+            <button onClick={() => downloadChart('rarity')} className={theme.buttonActive}>Export</button>
           </div>
         </div>
         {!collapsed.rarity && (
@@ -133,7 +131,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                 labels: ['5★', '4★'],
                 datasets: [{
                   data: [rarityCount['5-Star'] || 0, rarityCount['4-Star'] || 0],
-                  backgroundColor: ['#facc15', '#a78bfa'],
+                  backgroundColor: theme.chartColors.pie,
                 }]
               }}
               options={{ responsive: true, maintainAspectRatio: false }}
@@ -144,12 +142,12 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
 
       {/* Featured */}
       {featuredList.length > 0 && (
-        <div className="bg-white p-3 rounded-2xl shadow-md">
+        <div className={`${theme.panelBg} p-3 rounded-2xl shadow-lg border border-white/30`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-sm">Featured vs Off-Banner 5★ Pulls</h3>
+            <h3 className={`font-semibold text-sm ${theme.headingText}`}>Featured vs Off-Banner 5★ Pulls</h3>
             <div className="space-x-2 text-xs">
-              <button onClick={() => toggle('featured')} className="text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('featured')} className="text-green-600">Export</button>
+              <button onClick={() => toggle('featured')} className={theme.buttonInactive}>Toggle</button>
+              <button onClick={() => downloadChart('featured')} className={theme.buttonActive}>Export</button>
             </div>
           </div>
           {!collapsed.featured && (
@@ -161,7 +159,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                   datasets: [{
                     label: 'Count',
                     data: [featuredPulls, offBannerPulls],
-                    backgroundColor: ['#34d399', '#f87171'],
+                    backgroundColor: theme.chartColors.barFeatured,
                   }]
                 }}
                 options={{
@@ -177,12 +175,12 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
 
       {/* Pity */}
       {pityGaps.length > 0 && (
-        <div className="bg-white p-3 rounded-2xl shadow-md">
+        <div className={`${theme.panelBg}  p-3 rounded-2xl shadow-lg border border-white/30`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-sm">Pity Histogram (Pulls Between 5★s)</h3>
+            <h3 className={`font-semibold text-sm ${theme.headingText}`}>Pity Histogram (Pulls Between 5★s)</h3>
             <div className="space-x-2 text-xs">
-              <button onClick={() => toggle('pity')} className="text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('pity')} className="text-green-600">Export</button>
+              <button onClick={() => toggle('pity')} className={theme.buttonInactive}>Toggle</button>
+              <button onClick={() => downloadChart('pity')} className={theme.buttonActive}>Export</button>
             </div>
           </div>
           {!collapsed.pity && (
@@ -194,7 +192,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                   datasets: [{
                     label: 'Pulls Since Last 5★',
                     data: pityGaps,
-                    backgroundColor: '#60a5fa',
+                    backgroundColor: theme.chartColors.pity,
                   }]
                 }}
                 options={{
@@ -208,14 +206,14 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
         </div>
       )}
 
-            {/* Probability */}
+      {/* Probability */}
       {banner.softPity?.enabled && (
-        <div className="bg-white p-3 rounded-2xl shadow-md">
+        <div className={`${theme.panelBg} p-3 rounded-2xl shadow-lg border border-white/30`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-sm">Cumulative 5★ Probability Curve</h3>
+            <h3 className={`font-semibold text-sm ${theme.headingText}`}>Cumulative 5★ Probability Curve</h3>
             <div className="space-x-2 text-xs">
-              <button onClick={() => toggle('prob')} className="text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('prob')} className="text-green-600">Export</button>
+              <button onClick={() => toggle('prob')} className={theme.buttonInactive}>Toggle</button>
+              <button onClick={() => downloadChart('prob')} className={theme.buttonActive}>Export</button>
             </div>
           </div>
           {!collapsed.prob && (
@@ -234,8 +232,8 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                       const rate = Math.min(base + slope * (pity - (banner.softPity.start - 1)), banner.softPity.maxRate);
                       return rate * 100;
                     }),
-                    borderColor: '#22d3ee',
-                    backgroundColor: 'rgba(34, 211, 238, 0.2)',
+                    borderColor: theme.chartColors.probLine,
+                    backgroundColor: 'rgba(34, 197, 94, 0.2)',
                     fill: true,
                     tension: 0.3,
                   }]
@@ -246,19 +244,11 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                   scales: {
                     y: {
                       beginAtZero: true,
-                      ticks: {
-                        callback: (val) => val + '%'
-                      },
-                      title: {
-                        display: true,
-                        text: 'Chance of 5★',
-                      }
+                      ticks: { callback: (val) => val + '%' },
+                      title: { display: true, text: 'Chance of 5★' },
                     },
                     x: {
-                      title: {
-                        display: true,
-                        text: 'Pull Number (since last 5★)',
-                      }
+                      title: { display: true, text: 'Pull Number (since last 5★)' },
                     }
                   }
                 }}
@@ -270,12 +260,12 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
 
       {/* Spend */}
       {spendingData.length > 0 && (
-        <div className="bg-white p-3 rounded-2xl shadow-md">
+        <div className={`${theme.panelBg} p-3 rounded-2xl shadow-lg border border-white/30`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-sm">Cumulative Spending Over Time</h3>
+            <h3 className={`font-semibold text-sm ${theme.headingText}`}>Cumulative Spending Over Time</h3>
             <div className="space-x-2 text-xs">
-              <button onClick={() => toggle('spend')} className="text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('spend')} className="text-green-600">Export</button>
+              <button onClick={() => toggle('spend')} className={theme.buttonInactive}>Toggle</button>
+              <button onClick={() => downloadChart('spend')} className={theme.buttonActive}>Export</button>
             </div>
           </div>
           {!collapsed.spend && (
@@ -287,8 +277,8 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                   datasets: [{
                     label: '£ Spent',
                     data: spendingData.map(p => p.y),
-                    borderColor: '#f97316',
-                    backgroundColor: 'rgba(252, 211, 77, 0.3)',
+                    borderColor: theme.chartColors.spendLine,
+                    backgroundColor: 'rgba(16, 185, 129, 0.3)',
                     fill: true,
                     tension: 0.3,
                   }]
@@ -299,9 +289,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                   scales: {
                     y: {
                       beginAtZero: true,
-                      ticks: {
-                        callback: (val: number | string) => `£${Number(val).toFixed(0)}`
-                      }
+                      ticks: { callback: (val: number | string) => `£${Number(val).toFixed(0)}` },
                     }
                   }
                 }}
@@ -313,12 +301,12 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
 
       {/* Timeline */}
       {pullTimeline.length > 0 && (
-        <div className="bg-white p-3 rounded-2xl shadow-md">
+        <div className={`${theme.panelBg} p-3 rounded-2xl shadow-lg border border-white/30`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold text-sm">Pull Timeline by Rarity</h3>
+            <h3 className={`font-semibold text-sm ${theme.headingText}`}>Pull Timeline by Rarity</h3>
             <div className="space-x-2 text-xs">
-              <button onClick={() => toggle('timeline')} className="text-blue-600">Toggle</button>
-              <button onClick={() => downloadChart('timeline')} className="text-green-600">Export</button>
+              <button onClick={() => toggle('timeline')} className={theme.buttonInactive}>Toggle</button>
+              <button onClick={() => downloadChart('timeline')} className={theme.buttonActive}>Export</button>
             </div>
           </div>
           {!collapsed.timeline && (
@@ -333,7 +321,7 @@ export default function StatsDashboard({ history, banner, gameKey }: Props) {
                     pointRadius: 4,
                     pointHoverRadius: 6,
                     pointBackgroundColor: pullTimeline.map(p =>
-                      p.y === 3 ? '#facc15' : p.y === 2 ? '#a78bfa' : '#e5e7eb'
+                      p.y === 3 ? theme.chartColors.pie[0] : p.y === 2 ? theme.chartColors.pie[1] : '#e5e7eb'
                     ),
                     pointBorderColor: '#111',
                     borderColor: '#6b7280',

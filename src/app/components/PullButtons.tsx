@@ -1,15 +1,24 @@
 interface Props {
   onOnePull: () => void;
   onTenPull: () => void;
+  gameKey: string;
 }
 
-export default function PullButtons({ onOnePull, onTenPull }: Props) {
+import { getTheme } from '@/lib/themeConfig';
+
+export default function PullButtons({ onOnePull, onTenPull, gameKey }: Props) {
+  const theme = getTheme(gameKey);
+
   return (
     <div className="flex justify-center gap-3">
-      <button onClick={onOnePull} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition">
+      <button
+        onClick={onOnePull}
+        className={`px-5 py-2.5 rounded-md text-sm font-medium transition ${theme.buttonActive}`}>
         One Pull
       </button>
-      <button onClick={onTenPull} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-sm font-medium transition">
+      <button
+        onClick={onTenPull}
+        className={`px-5 py-2.5 rounded-md text-sm font-medium transition ${theme.buttonInactive}`}>
         Ten Pulls
       </button>
     </div>
