@@ -1,4 +1,3 @@
-// /lib/getOrCreateUserId.ts
 export const getOrCreateUserId = (): string => {
   if (typeof window === 'undefined') return ''; 
 
