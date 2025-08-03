@@ -337,6 +337,73 @@ export const gachaRates = {
       },
     },
   },
+WutheringWaves: {
+  name: 'Wuthering Waves',
+  icon: '/icons/wuwa.png',
+  banners: {
+    Limited: {
+      name: 'Tidal Echoes',
+      type: 'limited',
+      costPerPullGBP: 2.45,
+      currencyPerPull: 160,
+      rates: {
+        '5-Star': 0.008,
+        '4-Star': 0.06,  
+        '3-Star': 0.932,
+      },
+      pity: {
+        '5-Star': 80,
+        '4-Star': 10,
+      },
+      softPity: {
+        enabled: true,
+        start: 65,
+        maxRate: 0.324, 
+      },
+      featured: {
+        '5-Star': ['Phrolova'],
+        '4-Star': ['Taoqi', 'Lumi', 'Yuanwu'],
+      },
+      pool: {
+        '5-Star': [
+          'Calcharo', 'Verina', 'Encore', 'Lingyang', 'Jianxin',
+        ],
+        '4-Star': ['Yangyang', 'Chixia', 'Baizhi', 'Danjin', 'Sanhua', 'Mortefi', 'Aalto', 'Youhu', 'Dauntless Evernight', 'Commando of Conviction', 'Undying Flame', 'Amity Accord', 'Jinzhou Keeper', 'Discord', 'Overture', 'Cadenza', 'Marcato', 'Variation', 'Helios Cleaver', 'Lunar Cutter', 'Novaburst', 'Hollow Mirage', 'Comet Flare', 'Waning Redshift', 'Endless Collapse', 'Relativistic Jet', 'Celestial Spiral', 'Fusion Accretion'],
+        '3-Star': ['Broadblade of Night', 'Sword of Night', 'Pistols of Night', 'Gauntlets of Night', 'Rectifier of Night', 'Broadblade of Voyager', 'Sword of Voyager', 'Pistols of Voyager', 'Gauntlets of Voyager', 'Rectifier of Voyager', 'Originite: Type I', 'Originite: Type II', 'Originite: Type III', 'Originite: Type IV', 'Originite: Type V'],
+      },
+    },
+    Weapon: {
+      name: 'Lustrous Armament',
+      type: 'weapon',
+      costPerPullGBP: 2.45,
+      currencyPerPull: 160,
+      rates: {
+        '5-Star': 0.008,
+        '4-Star': 0.06,
+        '3-Star': 0.932,
+      },
+      pity: {
+        '5-Star': 80, 
+        '4-Star': 10,
+      },
+      softPity: {
+        enabled: true,
+        start: 65,
+        maxRate: 0.324,
+      },
+      featured: {
+        '5-Star': ['Lethean Elegy'], 
+        '4-Star': ['Jinzhou Keeper', 'Lunar Cutter', 'Celestial Spiral'],
+      },
+      pool: {
+        '5-Star': ['Lethean Elegy'],
+        '4-Star': ['Yangyang', 'Chixia', 'Baizhi', 'Danjin', 'Sanhua', 'Mortefi', 'Aalto', 'Youhu', 'Dauntless Evernight', 'Commando of Conviction', 'Undying Flame', 'Amity Accord', 'Jinzhou Keeper', 'Discord', 'Overture', 'Cadenza', 'Marcato', 'Variation', 'Helios Cleaver', 'Lunar Cutter', 'Novaburst', 'Hollow Mirage', 'Comet Flare', 'Waning Redshift', 'Endless Collapse', 'Relativistic Jet', 'Celestial Spiral', 'Fusion Accretion'],
+        '3-Star': ['Broadblade of Night', 'Sword of Night', 'Pistols of Night', 'Gauntlets of Night', 'Rectifier of Night', 'Broadblade of Voyager', 'Sword of Voyager', 'Pistols of Voyager', 'Gauntlets of Voyager', 'Rectifier of Voyager', 'Originite: Type I', 'Originite: Type II', 'Originite: Type III', 'Originite: Type IV', 'Originite: Type V'],
+      },
+      guarantee: true, 
+    },
+  },
+},
   Custom: {
     name: 'Custom Game',
   icon: '/icons/custom.jpg',
@@ -355,6 +422,23 @@ export const gachaRates = {
     },
   },
 } as const;
+//     name: 'Custom Game',
+//   icon: '/icons/custom.jpg',
+//     banners: {
+//       Default: {
+//         name: 'Custom Standard Banner',
+//         type: 'standard',
+//         costPerPullGBP: 1.60,
+//         currencyPerPull: 100,
+//         rates: { '5-Star': 0.01, '4-Star': 0.09, '3-Star': 0.90 },
+//         pity: { '5-Star': 0, '4-Star': 0 },
+//         softPity: { enabled: false, start: 0, maxRate: 0 },
+//         featured: { '5-Star': [], '4-Star': [] },
+//         pool: { '5-Star': [], '4-Star': [], '3-Star': [] },
+//       },
+//     },
+//   },
+// } as const;
 
 export type GameKey = keyof typeof gachaRates;
 export type BannerKey = keyof typeof gachaRates['Genshin']['banners'];

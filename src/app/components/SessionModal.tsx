@@ -37,12 +37,17 @@ interface Props {
 export default function SessionModal({ isOpen, onClose, session, onDelete }: Props) {
   if (!session) return null;
 
-  const gameKey: GameKey =
-    session.game === 'Genshin Impact'
-      ? 'Genshin'
-      : session.game === 'Honkai: Star Rail'
-      ? 'Honkai'
-      : 'Custom';
+const gameKey: GameKey =
+  session.game === 'Genshin Impact'
+    ? 'Genshin'
+    : session.game === 'Honkai: Star Rail'
+    ? 'Honkai'
+    : session.game === 'Zenless Zone Zero'
+    ? 'ZZZ'
+    : session.game === 'Wuthering Waves'
+    ? 'WutheringWaves'
+    : 'Custom';
+
 
   const collection = useCollectionTracker(session.pulls, gameKey);
 

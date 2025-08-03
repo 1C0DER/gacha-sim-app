@@ -78,6 +78,33 @@ export const gameThemes = {
     sectionUnderline: 'after:block after:h-1 after:w-12 after:bg-red-400 after:mt-1 after:mx-auto rounded',
   },
 
+  WutheringWaves: {
+  background: '/wuwa.png',
+  primaryColor: '#b91c1c', 
+  accentColor: '#f87171', 
+  textColor: '#fef2f2',
+  overlay: 'rgba(0, 0, 0, 0.25)',
+  panelBg: 'bg-white/20 backdrop-blur-md shadow-md', 
+  headingText: 'text-red-100 drop-shadow-md',
+  buttonActive:
+    'bg-gradient-to-r from-red-500 to-red-700 text-white shadow-lg hover:from-red-600 hover:to-red-800 hover:shadow-xl transition-transform hover:scale-105',
+  buttonInactive:
+    'bg-red-100 text-red-700 hover:bg-red-200 shadow-sm',
+  chartColors: {
+    pie: ['#f87171', '#b91c1c'], 
+    barFeatured: ['#b91c1c', '#f59e0b'], 
+    pity: '#60a5fa',
+    probLine: '#ef4444',
+    probFill: 'rgba(239, 68, 68, 0.2)',        
+    spendLine: '#dc2626',
+    spendFill: 'rgba(220, 38, 38, 0.3)',     
+    timelineBorder: '#991b1b',
+    timelineFill: '#f8f8f866',
+  },
+  borderGold: 'border border-red-300',
+  sectionUnderline: 'after:block after:h-1 after:w-12 after:bg-red-400 after:mt-1 after:mx-auto rounded',
+  },
+
   Default: {
     background: '/back.png',
     primaryColor: '#7b61ff',

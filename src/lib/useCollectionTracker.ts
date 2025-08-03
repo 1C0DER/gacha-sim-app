@@ -20,6 +20,7 @@ const gamePrefixes: Record<GameKey, string> = {
   Honkai: 'E',
   ZZZ: 'M',
   Custom: '?',
+  WutheringWaves: 'S',
 };
 
 export function useCollectionTracker(history: Pull[], gameKey: GameKey): CollectionEntry[] {
